@@ -1,0 +1,36 @@
+﻿body {
+    font-family: monospace;
+    margin: auto;
+}
+
+#myCanvas {
+    height: 800px;
+    width: 800px;
+    margin: auto;
+    display: block;
+}
+
+.main-title {
+    text-align: center;
+    font-size: 100%;
+    font-weight: bolder;
+}
+
+.heading-area {
+    margin-bottom: 15px;
+}
+
+.control-panel {
+    margin: auto;
+}
+
+hr {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-color: #b7b7b7;
+    border-width: 1px;
+}
+
+#show-setting-source {
+    font-weight: bolder;
+}

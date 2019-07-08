@@ -1,0 +1,69 @@
+﻿body {
+    font-family: "Inconsolata";
+    overflow-y: scroll;
+    margin: 0px;
+}
+
+#myCanvas {
+    margin: 0px 0px;
+    padding: 0px 0px;
+    display: block;
+    margin-bottom: 10px;    
+}
+
+
+hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-color: lightgray;
+    border-width: 1px;
+}
+
+.row {
+    margin: 0px 0px;
+}
+
+
+.bold-text {
+    font-weight: bold !important;
+}
+
+#primary-container {
+    padding: 0;
+}
+
+.control-col {
+    padding: 15px 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: lightgray;
+}
+
+.btn-tbar {
+    margin-bottom: 10px;
+}
+
+#input-file {
+    /* color: transparent; */
+}
+
+#air-space {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    display: block;
+}
+
+#air-space-title {
+    text-align: center;
+    margin-top: 40px;
+}
+
+#all-scen {
+    font-weight: bold;
+    color: green;
+    font-size: 120%;
+}

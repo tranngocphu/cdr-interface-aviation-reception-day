@@ -1,0 +1,110 @@
+﻿body {
+    font-family: monospace;
+    overflow: hidden;
+}
+
+.container {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#myCanvas {
+    height: 800px;
+    width: 800px;
+    margin: auto;
+    display: block;
+}
+
+.main-title {
+    text-align: center;
+    font-size: 100%;
+    font-weight: bolder;
+    display: inline-block;
+}
+
+.btn-gap {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+
+.live-info {
+    text-align: center;
+    margin: auto;
+}
+
+.red-text {
+    color: red;
+}
+
+.green-text {
+    color: green;
+}
+
+
+.heading-area {
+    margin-bottom: 15px;
+}
+
+.control-panel {
+    margin: auto;
+}
+
+hr {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-color: #b7b7b7;
+    border-width: 1px;
+}
+
+.slidecontainer {
+    width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 25px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */ 
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.time-indicator {
+    font-size: 150%;
+    line-height: 1.5;
+}
+
+label {
+  text-align: left;
+}
+
+.chart-area {
+    width: 90%;
+}

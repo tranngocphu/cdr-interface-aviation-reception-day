@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Auto generated favicon -->
+    <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="json/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Title and includes -->
+    <title>FLIGHTS CONFLICT GENERATOR AND RESOLVER</title>
+    <!-- <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inconsolata"> -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/custom_backend.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row heading-area">
+            <div class="col-12 main-title">FLIGHTS CONFLICT GENERATOR AND RESOLVER - CONTROL PANEL</div>
+        </div>
+        <!-- <div class="row control-panel">
+            <div class="col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="radio" name="setting-source" id="local-setting" value="local" onchange="UpdateSettingSource();">Read setting from local database
+                </label>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="radio" name="setting-source" id="remote-setting" value="remote" onchange="UpdateSettingSource();">Read setting from remote database
+                </label>
+            </div>
+        </div> -->
+        <div class="row control-panel">
+            <div class="col-12">
+                <label>You are reading/writing settings from/to <span id="show-setting-source"></span></label>
+            </div>
+        </div>
+        <hr>
+        <div class="row control-panel">
+            <div class="col-sm-6 col-lg-3">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="data_recording" onchange="UpdateSetting(this.id, this.checked, settingSource);">Recording data to database
+                </label>
+            </div>
+        </div>
+        <hr>
+        <div class="row control-panel">
+            <div class="col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="radio" name="scenario_source" id="database" value="database" onchange="UpdateSetting(this.name, this.value, settingSource);">Pick scenarios from database
+                </label>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="radio" name="scenario_source" id="randomize" value="randomize" onchange="UpdateSetting(this.name, this.value, settingSource);">Randomize new scenarios
+                </label>
+            </div>
+        </div>
+        <hr>
+        <div class="row control-panel">
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="init_cpa" onchange="UpdateSetting(this.id, this.checked, settingSource);" checked>Initial LOS Marker
+                </label>
+            </div>
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="live_cpa" onchange="UpdateSetting(this.id, this.checked, settingSource);">Live Cpa Indicator
+                </label>
+            </div>            
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="autoplay_conflict" onchange="UpdateSetting(this.id, this.checked, settingSource);">Auto Play Conflict
+                </label>
+            </div>
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="autoplay_resolution" onchange="UpdateSetting(this.id, this.checked, settingSource);">Auto Play Resolution
+                </label>
+            </div>
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="sync_point" onchange="UpdateSetting(this.id, this.checked, settingSource);">SyncPoint (LaterAircraftEntering)
+                </label>
+            </div>            
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="show_score" onchange="UpdateSetting(this.id, this.checked, settingSource);">Score Feedback
+                </label>
+            </div>
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="show_good_cpa" onchange="UpdateSetting(this.id, this.checked, settingSource);">Show Good CPA
+                </label>
+            </div>
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="show_res_history" onchange="UpdateSetting(this.id, this.checked, settingSource);">Show Resolution History
+                </label>
+            </div>
+            <div class="form-group form-inline col-sm-6 col-lg-4">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="show_potential_los" onchange="UpdateSetting(this.id, this.checked, settingSource);">Show Potential Lateral LOS in Vertical Mode
+                </label>
+            </div>
+        </div>
+        <hr>
+        <div class="row control-panel">
+            <div class="form-group col-sm-6 col-lg-4">
+                <label>Time limit for resolving (s):</label>
+                <input type="number" class="form-control col-xs-8 col-sm-6 col-md-6 col-lg-4" id="scen_time" onchange="UpdateSetting(this.id, this.value, settingSource);">
+            </div>
+            <div class="form-group col-sm-6 col-lg-4">
+                <label>Rest time before each scenario (s):</label>
+                <input type="number" class="form-control col-xs-8 col-sm-6 col-md-6 col-lg-4" id="rest_time" onchange="UpdateSetting(this.id, this.value, settingSource);">
+            </div>
+            <div class="form-group col-sm-6 col-lg-4">
+                <label>Scenarios per break:</label>
+                <input type="number" class="form-control col-xs-8 col-sm-6 col-md-6 col-lg-4" id="scen_per_break" onchange="UpdateSetting(this.id, this.value, settingSource);">
+            </div>
+            <div class="form-group col-sm-6 col-lg-4">
+                <label>Break time (s):</label>
+                <input type="number" class="form-control col-xs-8 col-sm-6 col-md-6 col-lg-4" id="break_time" onchange="UpdateSetting(this.id, this.value, settingSource);">
+            </div>                 
+        </div>
+        <div class="row control-panel">
+            <div class="form-group col-sm-6 col-lg-4">
+                <div class="form-group form-horizontal">
+                    <label>PlaySpeed:</label>
+                    <input type="number" class="form-control col-xs-8 col-sm-6 col-md-6 col-lg-4" id="play_speed" onchange="UpdateSetting(this.id, this.value, settingSource);">
+                </div>
+            </div> 
+            <div class="form-group col-sm-6 col-lg-4">
+                <label>Flight path width:</label>
+                <input type="number" class="form-control col-xs-8 col-sm-6 col-md-6 col-lg-4" id="flight_stroke" onchange="UpdateSetting(this.id, this.value, settingSource);">
+            </div>
+            <div class="form-group col-sm-6 col-lg-4">
+                <label>Path width on selection:</label>
+                <input type="number" class="form-control col-xs-8 col-sm-6 col-md-6 col-lg-4" id="flight_stroke_selected" onchange="UpdateSetting(this.id, this.value, settingSource);">
+            </div>                 
+        </div>
+        <div class="form-inline col-12">
+            <label>Please confirm all settings before an experiment:&nbsp;&nbsp;</label>
+            <button type="button" class="btn btn-primary float-right" onclick="window.open('experiment.html');">START EXPERIMENT</button>
+        </div>   
+        <hr>      
+        <div class="row control-panel">
+            <div class="col-12">SAVE DATA:</div>
+            <form class="col-12">
+                <div class="form-group form-inline">
+                    <label>Experiment Date:&nbsp;&nbsp;</label>
+                    <input type="date" class="form-control col-xs-12 col-sm-5 col-md-4 col-lg-3" id="exp-date">
+                </div>
+            </form>
+            <div class="btn-tbar col-12">
+                <button type="button" class="btn btn-danger" onclick="download('conflict');">Save Conflicts</button>
+                <button type="button" class="btn btn-success" onclick="download('resolution');">Save Resolutions</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row control-panel">
+            <div class="col-12">TEST TRIGGERS:</div>
+            <div class="btn-tbar col-12">
+                <button type="button" class="btn btn-info" id="0" onclick="SendHardTrigger(this.id);">Chan 0</button>
+                <button type="button" class="btn btn-info" id="1" onclick="SendHardTrigger(this.id);">Chan 1</button>
+                <button type="button" class="btn btn-info" id="2" onclick="SendHardTrigger(this.id);">Chan 2</button>
+                <button type="button" class="btn btn-info" id="3" onclick="SendHardTrigger(this.id);">Chan 3</button>
+                <button type="button" class="btn btn-info" id="4" onclick="SendHardTrigger(this.id);">Chan 4</button>
+                <button type="button" class="btn btn-info" id="5" onclick="SendHardTrigger(this.id);">Chan 5</button>
+                <button type="button" class="btn btn-info" id="6" onclick="SendHardTrigger(this.id);">Chan 6</button>
+                <button type="button" class="btn btn-info" id="7" onclick="SendHardTrigger(this.id);">Chan 7</button>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/ServerAdapter.js"></script>
+        <script type="text/javascript" src="js/SettingSource.js"></script>
+        <script type="text/javascript" src="js/BackendFunctions.js"></script>
+</body>
+
+</html>

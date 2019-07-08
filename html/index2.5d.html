@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Auto generated favicon -->
+  <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="json/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Title and includes -->
+  <title>FLIGHTS CONFLICT GENERATOR AND RESOLVER</title>
+  <!-- <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inconsolata"> -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/custom2.5d.css">
+</head>
+
+<body>
+  <div id="primary-container" class="container-fluid">
+    <!-- 2D views -->
+    <div id="2D"></div>  
+    <div id="canvas-area" class="row">  	  
+      <canvas id="myCanvas" height="660" width="1900"></canvas>
+    </div>
+    
+    <!-- Control area -->
+    <div id="control-area" class="row">
+      <!-- Columnn-1 -->
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="control-col">
+          <form class="">       
+            <div class="form-group row" hidden>          
+              <label class="col-sm-4 col-form-label"><a href="setting" target="_blank" id="see-setting">View Setting</a></label>
+              <div class="col-sm-8">
+                  <button type="button" class="" id="update-setting-btn">Update Setting</button>
+              </div>                  
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-12 col-form-label" for="input-file">
+                <button type="button" class="" id="demo-data">Load Demo Data</button>
+                &nbsp;Upload data:
+                <input type="file" class="" id="input-file" title="">
+                
+              </label>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-12 col-form-label">Current/Total Scen: <input type="number" id="current-scen" min="1" value="" style="width: 3em"> / <span id="all-scen">No data loaded</span></label>            
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <label class="">Show Views:&nbsp;&nbsp;</label>
+                <label class="checkbox-inline"><input type="checkbox" id="show-top-view" name="show-view" checked>&nbsp;Top View&nbsp;&nbsp;</label>  
+                <label class="checkbox-inline"><input type="checkbox" id="show-side-view" name="show-view" checked>&nbsp;Side View&nbsp;&nbsp;</label>  
+                <label class="checkbox-inline"><input type="checkbox" id="show-3d-view" name="show-view">&nbsp;3D View</label>
+              </div>          
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-12 col-form-label" style="font-weight: bold; font-size: 100%;">UNIT SCALE: VERTICAL/LATERAL=<span id="vertical-scale"></span></label>          
+            </div>
+            <hr>
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="show_good_cpa" onchange="UpdateSetting(this.id, this.checked);">Show Good CPA
+                </label>
+              </div>
+              <div class="col-sm-12">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="show_res_history" onchange="UpdateSetting(this.id, this.checked);">Show Resolution History
+                </label>
+              </div>
+              <div class="col-sm-12">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="show_potential_los" onchange="UpdateSetting(this.id, this.checked);" checked>Show Potential Lateral LOS in Vertical Mode
+                </label>
+              </div>              
+            </div>                         
+          </form>        
+        </div>
+      </div>
+      <!-- Columnn-2 -->
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="control-col">
+          <div class="row">
+            <div class="col-sm-5">
+              <label style="font-weight: bold;">SEPARATION STRATEGY:</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="sep-type" id="lateral-sep" value="option1">
+                <label class="form-check-label" for="lateral-sep" id="lateral-sep-label">Lateral</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="sep-type" id="vertical-sep" value="option1">
+                <label class="form-check-label" for="vertical-sep" id="vertical-sep-label">Vertical</label>
+              </div>
+            </div>
+            <div class="col-sm-7">
+              <div class="row">
+                <div class="form-inline">
+                    <label class="col-form-label" for="climb-rate">Climb/Descent Rate (ft/min):</label>
+                    <label class="col-form-label"><input class="" type="range" min="500" step="500" max="6000" value="1500" id="climb-rate"></label>
+                    &nbsp;&nbsp;<label class="col-form-label" id="current-climb-rate"></label>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="">Level increment: <span id="level-change">N/A</span></div>             
+              </div>                          
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-6 form-inline">
+              <label class="col-form-label" for="run-conflict">Run conflict:</label>
+              <label class="col-form-label"><input class="" type="range" min="0" step="0.5" max="100" value="0" id="run-conflict"></label>
+            </div>
+            <div class="col-sm-6 form-inline">
+              <label class="col-form-label" for="run-resolution">Run resolution:</label>
+              <label class="col-form-label"><input class="" type="range" min="0" step="0.5" max="100" value="0" id="run-resolution"></label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="" id="download-section" style="margin-top: 10px;">
+            <a href="" download="" id="download-link" hidden></a>
+            <button type="button" class="" id="download-resolution">SAVE/DOWNLOAD RESOLUTION</button>            
+          </div>
+        </div>
+      </div>
+      <!-- Columnn-3 -->
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">        
+        <div class="">
+          <div class="form-check form-check-inline">
+            <label class="form-check-label" for="prefer-lateral" style="font-weight: bold;">FINAL RESOLUTION: </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="sep-choice" id="prefer-lateral" value="lateral" disabled>
+            <label class="form-check-label" for="prefer-lateral">Lateral</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="sep-choice" id="prefer-vertical" value="vertical" disabled>
+            <label class="form-check-label" for="prefer-vertical">Vertical</label>
+          </div>         
+        </div>
+        <div class="btn-tbar">          
+          <button type="button" class="" id="prev-btn" disabled>PREV SCENARIO</button>
+          <button type="button" class="" id="next-btn" disabled>NEXT SCENARIO</button>  
+        </div>
+        <div class="control-col">
+          <div class="form-group row">
+            <div class="col-sm-12">EEG EXPERIMENT SECTION:</div>            
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-12 col-form-label" for="subject-name">Subject:
+              <input type="text" class="" id="subject-name" value="">
+            </label>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-5">
+              <label class="">Situation awareness:</label>
+              <div class="">
+                <label class="radio-inline"><input type="radio" id="is-conflict" name="scen-awareness" value="0">&nbsp;LOSS OF SEPARATION</label>  
+                <label class="radio-inline"><input type="radio" id="no-conflict" name="scen-awareness" value="1">&nbsp;NO CONFLICT</label>  
+              </div>
+            </div>
+            <div class="col-sm-7">
+              <div class="">Scenario count &nbsp;&nbsp;: <span id="scen-counter">0</span></div>
+              <div class="">Recent Score &nbsp;&nbsp;&nbsp;&nbsp;: <span id="recent-score">N/A</span></div>             
+              <div class="">Current Score  &nbsp;&nbsp;&nbsp;: <span id="current-score">N/A</span></div>              
+              <div class="">Current time left: <span id="timer">0</span></div> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 3D sector -->
+    <div class="row" id="visual-air-space">
+      <div class="col-lg-12">
+        <h3 id="air-space-title">3D VISUALIZATION OF FLIGHT TRAJECTORIES</h3>
+      </div>    
+      <div class="col-sm-8 col-md-10 col-lg-10" id="air-space-container">
+      </div>
+      <div class="col-sm-4 col-md-2 col-lg-2" id="view-control">
+        <div class="form-group">
+            <a href="#2D">View 2D Scenario</a>
+        </div>        
+        <div class="form-group">          
+          <button type="button" class="" id="render-lateral-res">Show Lateral Res</button>
+        </div>
+        <div class="form-group">          
+            <button type="button" class="" id="render-vertical-res">Show Vertical Res</button>           
+          </div>
+        <div id="3d-space-note"></div>
+      </div>
+      <canvas id="air-space"></canvas>
+    </div> 
+  
+  </div> <!-- end of biggest div after body tag -->
+
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/math.min.js"></script>
+  <script type="text/javascript" src="js/paper-full.min.js"></script>
+  <script type="text/javascript" src="js/threejs/three.min.js"></script>
+	<script type="text/javascript" src="js/threejs/DragControls.js"></script>
+	<script type="text/javascript" src="js/threejs/OrbitControls.js"></script>
+	<script type="text/javascript" src="js/threejs/TransformControls.js"></script>
+  <script type="text/javascript">
+    paper.install(window);
+    paper.setup('myCanvas');
+  </script>
+  <script type="text/javascript" src="js/VisualToolClass.js"></script>
+  <script type="text/javascript" src="js/2.5d/initialization.js"></script>
+  <script type="text/javascript" src="js/2.5d/functions.js"></script>
+  <script type="text/javascript" src="js/2.5d/interaction.js"></script>
+  <script type="text/javascript" src="js/2.5d/dom.js"></script>
+  <script type="text/javascript" src="js/2.5d/demo.js"></script>
+  <script type="text/javascript" src="js/2.5d/airspace.js"></script>
+</body>
+
+</html>

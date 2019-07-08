@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Auto generated favicon -->
+  <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="json/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Title and includes -->
+  <title>FLIGHTS CONFLICT GENERATOR AND RESOLVER</title>
+  <!-- <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inconsolata"> -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/custom.css">
+</head>
+
+<body>
+  <div class="row">
+    <div class="col-lg-8 canvas-container">
+      <div class="col-xs-12 col-lg-12">
+        <canvas id="myCanvas" resize></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <!-- TESTING SOURCE SELECTION -->
+      <div>
+        <label class="control-label">Testing Data:&nbsp;</label>  
+        <select id="input-testing">
+          <option value="" selected></option>
+          <option value="0">Test set 1</option>
+        </select>
+        <a href="/training" target="_blank">GoTraining</a>
+      </div> 
+      <br>
+      <div>Test case:&nbsp;<span id="test-case"></span></div> 
+      <br>         
+      <div>
+        <button type="button" class="" id="back-scen-btn" disabled>PreviousScen</button> 
+        <button type="button" class="" id="next-scen-btn">NextScen</button>   
+        <button type="button" class="" id="play-conflict-btn">PlayConflict</button>
+        <button type="button" class="" id="play-resolution-btn">PlayResolution</button>   
+      </div>          
+    </div>  
+  </div>
+
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/math.min.js"></script>
+  <script type="text/javascript" src="js/paper-full.min.js"></script>
+  <script type="text/javascript" src="js/Chart.js"></script>
+  <script type="text/javascript">
+    paper.install(window);
+    paper.setup('myCanvas');
+  </script>
+  <script type="text/javascript" src="js/ServerAdapter.js"></script>
+  <script type="text/javascript" src="js/ServerAdapter.js"></script>
+  <script type="text/javascript" src="js/SettingSource.js"></script>
+  <script type="text/javascript" src="js/VisualToolClass.js"></script>
+  <script type="text/javascript" src="js/SectorClass.js"></script>
+  <script type="text/javascript" src="js/ScenarioClass.js"></script>
+  <script type="text/javascript" src="js/FlightClass.js"></script>
+  <script type="text/javascript" src="js/Initialization.js"></script>
+  <script type="text/javascript" src="js/FrontEndFunctions.js"></script>
+  <script type="text/javascript" src="js/Main.js"></script>
+  <script type="text/javascript" src="js/TrainTestData.js"></script>
+  <script type="text/javascript" src="js/Demo.js"></script>
+</body>
+</html>
