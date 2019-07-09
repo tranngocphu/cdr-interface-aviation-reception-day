@@ -177,10 +177,11 @@ const mapMinCPA = vs.Real2Map(mySector.MinCPA);
 const mapSectorSize = vs.Real2Map(mySector.SectorSize);
 
 // ON-SCREEN GRAPHICAL FLIGHT PATHS AND ENTRY MARKER. DO NOT DELETE THIS PART
-var colorArr = [blue, green, orange, violet, pink, gray, yellow, maroon, black, red,
-    blue, green, orange, violet, pink, gray, yellow, maroon, black, red,
-    blue, green, orange, violet, pink
-];
+var colorArr = [blue, green, orange, violet, pink,
+                gray, yellow, maroon, black, red,
+                blue, green, orange, violet, pink, 
+                gray, yellow, maroon, black, red,
+                blue, green, orange, violet, pink];
 
 var oriPath = new Array(n);
 var modPath = new Array(n);
