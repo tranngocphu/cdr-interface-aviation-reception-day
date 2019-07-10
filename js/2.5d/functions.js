@@ -737,9 +737,12 @@ function MoveAircraft(type, percent) {
             ownshipFlightHeading = findFlightHeading(ownshipLateralResTop.curves[0]);
         } else {
             ownshipFlightHeading = findFlightHeading(ownshipLateralResTop.curves[1]);
-        }
-        ownshipFly.rotate(- ownshipFly.rotation + ownshipFlightHeading);
+        }       
+    } 
+    else {
+        ownshipFlightHeading = findFlightHeading(ownshipTop);   
     }
+    ownshipFly.rotate(- ownshipFly.rotation + ownshipFlightHeading);
     
     for (let i=0; i<surroundingFlight; i++) {
         try {
