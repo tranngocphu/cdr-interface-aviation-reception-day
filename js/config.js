@@ -26,7 +26,8 @@ const color = {
     ownship: blue,
     lower: gray,
     middle: gray,
-    upper: gray
+    upper: gray,
+    surrounding: gray
 };
 
 const lineWidth = {
@@ -36,6 +37,7 @@ const lineWidth = {
     flightLevel: 0.5,
     ownship: 5,
     intruder: 5,
+    flyMarker: 1,
     dashArray: [8, 8],
     resDashArray: [15, 5]
 };

@@ -101,7 +101,7 @@ $('#prev-btn').click(function ButtonPrevious() {
 })
 
 // Current scenario input 
-$('#current-scen').on('input change', function SpecifyScenarioNumber() {
+$('#current-scen').on('change', function SpecifyScenarioNumber() {
     Reset();
     currentScenarioId = parseInt($('#current-scen').val());
     ShowAScenario(currentScenarioId);

@@ -37,7 +37,7 @@ let vs = new VISUALTOOL();
 // ==========================================================================
 // Important physical interface global parameters
 const pi = math.pi;
-const hidden = new Point(-300, -300); // a hidden point position
+const hidden = new Point(-600, -600); // a hidden point position
 const sectorRadius = 320; // in drawing point unit, must be consistent with python code
 const nm2point = sectorRadius / 50; // Radius of the circular sector is 50 NM, equivelant to sectorRadius in drawing screen point
 const point2nm = 1 / nm2point;
@@ -182,6 +182,42 @@ function Marker(shape, position = new Point(0, 0), size, color, width, visible) 
             visible: visible
         })
     }
+
+    if (shape === 'arrow') {
+        let point1 = new Point({
+            length: size,
+            angle: 0
+        });
+        let point2 = new Point({
+            length: size,
+            angle: 110
+        });
+        let point3 = new Point({
+            length: size,
+            angle: 250
+        });
+        return new Group([
+            new Path.Line({
+                segments: [point1, point2],
+                strokeWidth: width * 2,
+                strokeColor: color,
+                visible: visible
+            }),
+            new Path.Line({
+                segments: [point1, point3],
+                strokeWidth: width * 2,
+                strokeColor: color,
+                visible: visible
+            }),
+            new Path.Circle({
+                center: (0, 0),
+                radius: size,
+                strokeColor: color,
+                strokeWidth: width,
+                visible: visible
+            })
+        ])
+    }
 };
 
 function cpaMarker(ownshipPointTop, intruderPointTop, intruderPointSide) {
@@ -312,16 +348,19 @@ let hasVerticalRes = false;
 let finalRes = '';
 
 
-// Loss of separation indicator, aircraft location
-let aircraftShape = 'circle';
+// Loss of Separation Indicator and Aircraft Location
+let aircraftShape = 'arrow';
 let surroundingLos = [];
 let intruderLos = cpaMarker(hidden, hidden);
 let surroundingFly = [];
-let intruderFly = Marker(aircraftShape, hidden, cpaThreshold / 2, color.intruder, true);
-let ownshipFly = Marker(aircraftShape, hidden, cpaThreshold / 2, color.ownship, true);
+let intruderFly = Marker(aircraftShape, hidden, cpaThreshold / 2, color.intruder, lineWidth.flyMarker, true);
+let ownshipFly = Marker(aircraftShape, hidden, cpaThreshold / 2, color.ownship, lineWidth.flyMarker, true);
+intruderFly.applyMatrix = false;
+ownshipFly.applyMatrix = false;
 for (let i = 0; i < surroundingFlight; i++) {
     surroundingLos[i] = cpaMarker(hidden, hidden, hidden);
-    surroundingFly[i] = Marker(aircraftShape, hidden, cpaThreshold / 2, '', true);
+    surroundingFly[i] = Marker(aircraftShape, hidden, cpaThreshold / 2, color.surrounding, lineWidth.flyMarker, true);
+    surroundingFly[i].applyMatrix = false;
 }
 
 
@@ -369,6 +408,14 @@ let srdFlightTop = [
         strokeColor: color.upper
     })
 ];
+
+// heading of the flight top view
+// this is fixed
+let srdFlightHeading;
+let intruderFlightHeading;
+let ownshipFlightHeading;
+let resFlightHeading;
+
 // Side view
 let srdFlightSide = [
     // idx 0->2: lower layer   

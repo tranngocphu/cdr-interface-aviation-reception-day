@@ -100,6 +100,11 @@ function LoadConflictFlight(currentScenario) {
     // initialize vertical resolution as place holder (top)
     ownshipVerticalResTop.segments[0].point = ownshipTop.firstSegment.point;
     ownshipVerticalResTop.segments[3].point = ownshipTop.lastSegment.point;
+    // find heading of the aircraft for visualization of heading arrow
+    intruderFlightHeading = findFlightHeading(intruderTop);
+    ownshipFlightHeading = findFlightHeading(ownshipTop); 
+    intruderFly.rotate(- intruderFly.rotation + intruderFlightHeading);
+    ownshipFly.rotate(- ownshipFly.rotation + ownshipFlightHeading);
 }
 
 
@@ -128,7 +133,11 @@ function LoadSurroundingFlight(currentScenario) {
         srdLevel[i] = currentScenario.surrounding_flight[i].flight_level;
         srdLevelSafe[i] = math.abs(srdLevel[i] - currentScenario.ownship_level) > 10;
         srdPointLevel[i] = srdLevel[i] * 100 * feet2nm * nm2point;
-    }    
+    }  
+    srdFlightHeading = srdFlightTop.map(function(e) { return findFlightHeading(e) }); 
+    surroundingFly.map(function(aircraft, idx) {
+        aircraft.rotate(- aircraft.rotation + srdFlightHeading[idx]);
+    })
 }
 
 
@@ -144,7 +153,7 @@ function ShowAScenario(currentScenarioId) {
     if (showResolutionHistory) {
         LoadSavedResolution(currentScenarioId);
     } 
-    DectectAndShowLateralLOS();  
+    DectectAndShowLateralLOS(); 
     ResetAllFlight(); // 3D
     RenderAllFlight();  // 3D
 }
@@ -551,7 +560,7 @@ function EnableVerticalSeparation(state) {
     ownshipLateralResTop.visible = !state; 
     ownshipLateralResSide.visible = !state; 
     topFinishLevelChange.map(function(element){
-        element.visible = false; // <================================================================ recently changed
+        element.visible = false;
         return element
     })
     // Reset los indicators
@@ -712,25 +721,26 @@ function DownloadResolution() {
 }
 
 
-// Animation
+// Animation: Move aircraft when dragging 'Run' sliders
+// Show heading arrow and update heading of resolution
 function MoveAircraft(type, percent) {
-    let distance;
-    if (type === 'conflict') {
-        distance = ownshipTop.length; 
-    }
-    if (type === 'resolution') {
-        distance = ownshipLateralResTop.length;
-    }
+    let distance = ((type === 'conflict') ? ownshipTop.length : ownshipLateralResTop.length);     
     let offset = distance * percent / 100;
     ownshipFly.visible = true;
     intruderFly.visible = true;
-    intruderFly.position = intruderTop.getPointAt(offset);
-    if (type === 'conflict') {        
-        ownshipFly.position  = ownshipTop.getPointAt(offset);
+    intruderFly.position = intruderTop.getPointAt(offset);       
+    ownshipFly.position  = ((type === 'conflict') ? ownshipTop.getPointAt(offset) : ownshipLateralResTop.getPointAt(offset));
+
+    if (type === 'resolution') {
+        // update ownship heading in resolution
+        if (offset < ownshipLateralResTop.curves[0].length) {
+            ownshipFlightHeading = findFlightHeading(ownshipLateralResTop.curves[0]);
+        } else {
+            ownshipFlightHeading = findFlightHeading(ownshipLateralResTop.curves[1]);
+        }
+        ownshipFly.rotate(- ownshipFly.rotation + ownshipFlightHeading);
     }
-    if (type === 'resolution') {        
-        ownshipFly.position  = ownshipLateralResTop.getPointAt(offset);
-    } 
+    
     for (let i=0; i<surroundingFlight; i++) {
         try {
             surroundingFly[i].visible = true;
@@ -771,3 +781,32 @@ function UpdateSetting(settingName, value) {
     setting[settingName] = value;
     ReadSetting();
 }
+
+// ==============================================
+// Function to find orientation of flight segment
+
+function findFlightHeading(flightPath) { 
+    let x1, y1, x2, y2;
+    if ( flightPath.segments ) {
+        x1 = flightPath.segments[0].point.x;
+        y1 = flightPath.segments[0].point.y;
+        x2 = flightPath.segments[1].point.x;
+        y2 = flightPath.segments[1].point.y;
+        console.log("case 1: original flight heading");
+    }
+    else {
+        x1 = flightPath.point1.x;
+        y1 = flightPath.point1.y;
+        x2 = flightPath.point2.x;
+        y2 = flightPath.point2.y;  
+        console.log("case 2: resolution flight heading");
+    }
+    if ( x2 != x1 ) {
+        angle = math.atan2((y2 - y1), (x2 - x1));
+        angle = angle * 180 / pi;
+    } 
+    else {
+        angle = 0;
+    }
+    return angle;    
+} 
