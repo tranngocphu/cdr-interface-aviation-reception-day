@@ -12,14 +12,18 @@ inputTool.minDistance = 0; // in points
 // =======================================
 // GLOBAL MOUSE HANDLERS
 // =======================================
-inputTool.onMouseDown = function GlobalMouseDown(event) { }
-
-inputTool.onMouseMove = function GlobalMouseMove (event) { 
-    if (event.point.x >= sideViewOrigin.x) {
-        sideVerticalLine.position.x = event.point.x - 1;
-        sideVerticalLine.children[1].content = ShowTime(math.round((event.point.x - sideViewOrigin.x) / commonSpeed));
+inputTool.onMouseDown = function GlobalMouseDown(event) { 
+    if ( resolutionIsRunning ) {
+        StopPlayingResolution();
     }
 }
+
+// inputTool.onMouseMove = function GlobalMouseMove (event) { 
+//     if (event.point.x >= sideViewOrigin.x) {
+//         sideVerticalLine.position.x = event.point.x - 1;
+//         sideVerticalLine.children[1].content = ShowTime(math.round((event.point.x - sideViewOrigin.x) / commonSpeed));
+//     }
+// }
 
 inputTool.onMouseDrag = function GlobalMouseDrag (event) { 
     if (performingLateralSeparation & sectorBorder.position.getDistance(event.point) <= sectorRadius) {
@@ -39,9 +43,13 @@ inputTool.onMouseDrag = function GlobalMouseDrag (event) {
 
 inputTool.onMouseUp = function GlobalMouseUp (event) {
     sideHandle1Enable = true;
-    sideHandle2Enable = true;
-    performingLateralSeparation = false;
+    sideHandle2Enable = true;    
     lockLineWidth = false;
+    if ( performingLateralSeparation ) {
+        performingLateralSeparation = false;  
+        console.log('Finished lateral separation! Start playing resolution...');  
+        AutoPlayResolution();
+    }
 }
 
 

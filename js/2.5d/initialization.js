@@ -37,7 +37,7 @@ let vs = new VISUALTOOL();
 // ==========================================================================
 // Important physical interface global parameters
 const pi = math.pi;
-const hidden = new Point(-600, -600); // a hidden point position
+const hidden = new Point(0, 0); // a hidden point position
 const sectorRadius = 320; // in drawing point unit, must be consistent with python code
 const nm2point = sectorRadius / 50; // Radius of the circular sector is 50 NM, equivelant to sectorRadius in drawing screen point
 const point2nm = 1 / nm2point;
@@ -53,7 +53,7 @@ let handleDistanceX = defaultHandleDistanceX;
 // Paper setup
 let canvas = document.getElementById('myCanvas');
 let margin = 10; // must be consistent with python code
-let paperWidth = 1900;
+let paperWidth = 660;
 let paperHeight = 660;
 canvas.width = paperWidth;
 canvas.height = paperHeight;
@@ -185,16 +185,16 @@ function Marker(shape, position = new Point(0, 0), size, color, width, visible) 
 
     if (shape === 'arrow') {
         let point1 = new Point({
-            length: size,
+            length: size * 0.6,
             angle: 0
         });
         let point2 = new Point({
-            length: size,
-            angle: 110
+            length: size * 0.6,
+            angle: 120
         });
         let point3 = new Point({
-            length: size,
-            angle: 250
+            length: size * 0.6,
+            angle: 240
         });
         return new Group([
             new Path.Line({
@@ -245,58 +245,85 @@ function cpaMarker(ownshipPointTop, intruderPointTop, intruderPointSide) {
 // Uppper and Lower layer have 15 flight levels (14 distances between levels)
 // ==========================================================================
 
+let showSideView = false;
 
+if ( showSideView ) {
 
-// ======================================================================
-// SHOW VERTICAL GRID
-let sideViewGrid = [];
-let importantLine = [5, 14, 23, 32];
-let levelLabel = ['FL340', 'FL350', 'FL360', 'FL370'];
-let flightLevel = [];
-// grid lines generation
-let fl = 0;
-for (let i = 0; i < 38; i++) {
-    let left = [sideViewOrigin.x - 40 * importantLine.includes(i), (sideViewOrigin.y + i * sideLevelStep).transY()];
-    let right = [sideViewOrigin.x + 20 * importantLine.includes(i) + sideViewWidth - lineWidth.rangeBar, (sideViewOrigin.y + i * sideLevelStep).transY()];
-    sideViewGrid[i] = new Path.Line({
-        segments: [left, right],
-        strokeColor: new Color(0.5 - 0.5 * importantLine.includes(i)),
-        strokeWidth: lineWidth.flightLevel,
-        opacity: 0.7
-    })
-    flightLevel[i] = (sideViewOrigin.y + i * sideLevelStep).transY();
-    if (importantLine.includes(i)) {
-        new PointText({
-            point: sideViewGrid[i].firstSegment.point.add(-10, -5),
-            content: levelLabel[fl],
-            fillColor: 'black',
-            fontFamily: 'Inconsolata',
-            fontSize: 14
-        });
-        fl += 1;
+    // ======================================================================
+    // SHOW VERTICAL GRID
+    let sideViewGrid = [];
+    let importantLine = [5, 14, 23, 32];
+    let levelLabel = ['FL340', 'FL350', 'FL360', 'FL370'];
+    let flightLevel = [];
+    // grid lines generation
+    let fl = 0;
+    for (let i = 0; i < 38; i++) {
+        let left = [sideViewOrigin.x - 40 * importantLine.includes(i), (sideViewOrigin.y + i * sideLevelStep).transY()];
+        let right = [sideViewOrigin.x + 20 * importantLine.includes(i) + sideViewWidth - lineWidth.rangeBar, (sideViewOrigin.y + i * sideLevelStep).transY()];
+        sideViewGrid[i] = new Path.Line({
+            segments: [left, right],
+            strokeColor: new Color(0.5 - 0.5 * importantLine.includes(i)),
+            strokeWidth: lineWidth.flightLevel,
+            opacity: 0.7
+        })
+        flightLevel[i] = (sideViewOrigin.y + i * sideLevelStep).transY();
+        if (importantLine.includes(i)) {
+            new PointText({
+                point: sideViewGrid[i].firstSegment.point.add(-10, -5),
+                content: levelLabel[fl],
+                fillColor: 'black',
+                fontFamily: 'Inconsolata',
+                fontSize: 14
+            });
+            fl += 1;
+        }
     }
+
+
+    // vertical range indicators
+    let lowerRangeIndicator = new Path.Line({
+        from: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 0).transY()],
+        to: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 14).transY()],
+        strokeColor: color.lower,
+        strokeWidth: lineWidth.rangeBar
+    });
+    let middleRangeIndicator = new Path.Line({
+        from: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 14).transY()],
+        to: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 23).transY()],
+        strokeColor: color.middle,
+        strokeWidth: lineWidth.rangeBar
+    });
+    let upperRangeIndicator = new Path.Line({
+        from: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 23).transY()],
+        to: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 37).transY()],
+        strokeColor: color.upper,
+        strokeWidth: lineWidth.rangeBar
+    });
+
+    // Side position match line
+    let sideVerticalLine = new Group([
+        new Path.Line({
+            segments: [
+                [0, 0],
+                [0, view.Size[1]]
+            ],
+            strokeColor: black,
+            strokeWidth: 0.7
+        }),
+        new PointText({
+            point: [-150, 20],
+            content: ('00 sec').padStart(13, ' '),
+            fillColor: blue,
+            fontFamily: 'Inconsolata',
+            // fontWeight: 'bold',
+            fontSize: 22
+        })
+    ]);
+    sideVerticalLine.pivot = sideVerticalLine.children[0].firstSegment.point;
+    sideVerticalLine.position.x = sideViewOrigin.x;
 }
 
 
-// vertical range indicators
-let lowerRangeIndicator = new Path.Line({
-    from: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 0).transY()],
-    to: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 14).transY()],
-    strokeColor: color.lower,
-    strokeWidth: lineWidth.rangeBar
-});
-let middleRangeIndicator = new Path.Line({
-    from: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 14).transY()],
-    to: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 23).transY()],
-    strokeColor: color.middle,
-    strokeWidth: lineWidth.rangeBar
-});
-let upperRangeIndicator = new Path.Line({
-    from: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 23).transY()],
-    to: [sideViewOrigin.x + sideViewWidth, (sideViewOrigin.y + sideLevelStep * 37).transY()],
-    strokeColor: color.upper,
-    strokeWidth: lineWidth.rangeBar
-});
 
 
 // ===============================================================================
@@ -599,27 +626,7 @@ for (let i = 0; i < surroundingFlight; i++) {
     topFinishLevelChange[i] = Marker('cross', new Point(0, 0), markerSize, markerColor, markerWidth, true);
 }
 
-// Side position match line
-let sideVerticalLine = new Group([
-    new Path.Line({
-        segments: [
-            [0, 0],
-            [0, view.Size[1]]
-        ],
-        strokeColor: black,
-        strokeWidth: 0.7
-    }),
-    new PointText({
-        point: [-150, 20],
-        content: ('00 sec').padStart(13, ' '),
-        fillColor: blue,
-        fontFamily: 'Inconsolata',
-        // fontWeight: 'bold',
-        fontSize: 22
-    })
-]);
-sideVerticalLine.pivot = sideVerticalLine.children[0].firstSegment.point;
-sideVerticalLine.position.x = sideViewOrigin.x;
+
 
 
 // Link between views
@@ -672,7 +679,7 @@ ownshipOverlaySide[1].bringToFront();
 ownshipOverlaySide[2].bringToFront();
 ownshipOverlayTop[1].bringToFront();
 ownshipOverlayTop[2].bringToFront();
-sideVerticalLine.bringToFront();
+// sideVerticalLine.bringToFront();
 sideHandle1.bringToFront(); // prioritized
 sideHandle2.bringToFront(); // prioritized
 surroundingLos.map(function (element) {
@@ -680,7 +687,7 @@ surroundingLos.map(function (element) {
 })
 intruderLos.bringToFront();
 topViewCover.bringToFront();
-sideVerticalLine.bringToFront();
+// sideVerticalLine.bringToFront();
 sideViewCover.bringToFront();
 
 
@@ -725,3 +732,8 @@ let spaceSector = document.getElementById('space-sector');
 // }
 
 // UpdateSetting();
+
+// global vars for auto play resolution
+var aircraftAutoPosition = 0;
+var resolutionIsRunning = false;
+var autoResolutionPlayer; // this will be assigned to setInterval()

@@ -30,16 +30,22 @@ function transform(flight, type) {
 function ParseScenarioData(data) {    
     console.log(data);
     if (data.data_origin === 'JavaScriptInterface' | !data) {
+        console.log('test point 01');
         return data
     }
-    data.surrounding_flight  = JSON.parse(data.surrounding_flight);
-    if (flipY) {
-        // transform conflict flight
-        data = transform(data,'conflict');
-        data.surrounding_flight.map(function(element){
-            return transform(element,'surrounding');   
-        });
-    }   
+    console.log('test point 02');
+    try {
+        data.surrounding_flight  = JSON.parse(data.surrounding_flight);
+        if (flipY) {
+            // transform conflict flight
+            data = transform(data, 'conflict');
+            data.surrounding_flight.map(function(element){
+                return transform(element,'surrounding');   
+            });
+        }
+    } catch (e) {
+        console.log(e);
+    }       
     return data 
 }
 
@@ -154,6 +160,7 @@ function ShowAScenario(currentScenarioId) {
         LoadSavedResolution(currentScenarioId);
     } 
     DectectAndShowLateralLOS(); 
+    EnableVerticalSeparation(false);
     ResetAllFlight(); // 3D
     RenderAllFlight();  // 3D
 }
@@ -191,8 +198,8 @@ function Reset() {
     ownshipOverlayTop[1].segments = [hidden, hidden];
     ownshipOverlayTop[2].segments = [hidden, hidden];
     ownshipOverlayTop[2].strokeColor = color.ownship;
-    sideVerticalLine.position.x = sideViewOrigin.x;
-    sideVerticalLine.children[1].content = ('00 sec').padStart(13, ' ');
+    // sideVerticalLine.position.x = sideViewOrigin.x;
+    // sideVerticalLine.children[1].content = ('00 sec').padStart(13, ' ');
     handleDistanceX = defaultHandleDistanceX;
     viewLink.map(function(element) {
         element.visible = false;
@@ -813,3 +820,27 @@ function findFlightHeading(flightPath) {
     }
     return angle;    
 } 
+
+function AutoPlayResolution() {
+    autoResolutionPlayer = setInterval('AutoMoveAircraftResolution()', 62.5);
+    resolutionIsRunning = true;      
+}
+
+function AutoMoveAircraftResolution() {
+    aircraftAutoPosition += 1.25;
+    MoveAircraft('resolution', aircraftAutoPosition);
+    if ( aircraftAutoPosition == 100 ) {
+        StopPlayingResolution();  
+    }
+}
+
+function StopPlayingResolution() {
+    clearInterval(autoResolutionPlayer);
+    aircraftAutoPosition = 0;
+    resolutionIsRunning = false;
+    surroundingFly.map(function(element){
+        element.visible = false;
+    })
+    intruderFly.visible = false;   
+    ownshipFly.visible = false;    
+}
