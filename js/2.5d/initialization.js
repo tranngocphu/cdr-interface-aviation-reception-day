@@ -671,6 +671,24 @@ let sideViewCover = new Path.Rectangle({
     visible: false
 });
 
+let lateralTopLeftCover = new Path.Rectangle({
+    point: [0, 0],
+    size: [50, 50],
+    fillColor: 'white',
+    strokeColor: '',
+    strokeWidth: 0,
+    visible: true
+})
+
+let lateralBottomRightCover = new Path.Rectangle({
+    point: [610, 610],
+    size: [50, 50],
+    fillColor: 'white',
+    strokeColor: '',
+    strokeWidth: 0,
+    visible: true
+})
+
 
 // Reorder (z position) all graphical elements
 ownshipSide.bringToFront();
@@ -689,6 +707,8 @@ intruderLos.bringToFront();
 topViewCover.bringToFront();
 // sideVerticalLine.bringToFront();
 sideViewCover.bringToFront();
+lateralBottomRightCover.bringToFront();
+lateralTopLeftCover.bringToFront();
 
 
 // =======================================
@@ -737,3 +757,4 @@ let spaceSector = document.getElementById('space-sector');
 var aircraftAutoPosition = 0;
 var resolutionIsRunning = false;
 var autoResolutionPlayer; // this will be assigned to setInterval()
+
