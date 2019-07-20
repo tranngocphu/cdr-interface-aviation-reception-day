@@ -838,9 +838,20 @@ function StopPlayingResolution() {
     clearInterval(autoResolutionPlayer);
     aircraftAutoPosition = 0;
     resolutionIsRunning = false;
+    resolutionPlayingPaused = false;
     surroundingFly.map(function(element){
         element.visible = false;
     })
     intruderFly.visible = false;   
     ownshipFly.visible = false;    
+}
+
+function PausePlayingResolution() {
+    clearInterval(autoResolutionPlayer);
+    resolutionPlayingPaused = true;  
+}
+
+function ResumePlayingResolution() {
+    autoResolutionPlayer = setInterval('AutoMoveAircraftResolution()', 62.5);  
+    resolutionPlayingPaused = false; 
 }

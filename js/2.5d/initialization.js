@@ -756,5 +756,6 @@ let spaceSector = document.getElementById('space-sector');
 // global vars for auto play resolution
 var aircraftAutoPosition = 0;
 var resolutionIsRunning = false;
+var resolutionPlayingPaused = false;
 var autoResolutionPlayer; // this will be assigned to setInterval()
 

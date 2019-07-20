@@ -47,7 +47,6 @@ inputTool.onMouseUp = function GlobalMouseUp (event) {
     lockLineWidth = false;
     if ( performingLateralSeparation ) {
         performingLateralSeparation = false;  
-        console.log('Finished lateral separation! Start playing resolution...');  
         AutoPlayResolution();
     }
 }
@@ -118,17 +117,23 @@ ownshipTop.onMouseDown = function ownshipTopMouseDown (event) {
 ownshipLateralResTop.onMouseDown = function ownshipLateralResMouseDown (event) {
     if (lateralSeparation) {
         performingLateralSeparation = true;
-    }        
+    }       
 }
 
 ownshipLateralResTop.onMouseEnter = function ownshipLateralResMouseEnter (event) {
     if (!lockLineWidth & lateralSeparation) {
         this.strokeWidth = lineWidth.ownship * 1.5;
+    } 
+    if ( resolutionIsRunning ) {
+        PausePlayingResolution();
     }    
 }
 
 ownshipLateralResTop.onMouseLeave = function ownshipLateralResMouseLeave (event) {
     this.strokeWidth = lineWidth.ownship * 0.5;
+    if ( resolutionPlayingPaused && resolutionIsRunning ) {
+        ResumePlayingResolution();
+    }
 }
 
 // =====================================================================
