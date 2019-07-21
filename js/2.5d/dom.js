@@ -109,6 +109,7 @@ $('#current-scen').on('change', function SpecifyScenarioNumber() {
     $('#vertical-sep').prop('disabled', false);
     $('#lateral-sep').prop('checked', false);  
     $('#vertical-sep').prop('checked', false);    
+    StopPlayingResolution();
 })
 
 // ========================================================
