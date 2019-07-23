@@ -15,8 +15,7 @@ pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 1000)
 warnings.filterwarnings("error")
 sys.path.insert(0, '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/python-code/python_lib')
-
-from function_lib import *
+from function_lib import RandomizeFlight, LateralConflictDetector, SurroundingFlight, WriteData
 
 # Vars and Funcs declaration
 
@@ -110,8 +109,8 @@ def GenerateAScenario():
         for intruderIdx in middleIntruderIdx:
             # print(intruderIdx)
             try:
-                conflict = LateralConflictDetector(
-                    allFlight[ownshipIdx], allFlight[intruderIdx], cpa_threshold)
+                conflict = LateralConflictDetector(allFlight[ownshipIdx], allFlight[intruderIdx], cpa_threshold)
+                print(conflict)
             except RuntimeWarning:
                 stop = True
                 break
@@ -124,7 +123,7 @@ def GenerateAScenario():
 
     ownship = allFlight[ownshipIdx]
     intruder = allFlight[intruderIdx]
-    conflict_pair = [ownship, intruder]
+    # conflict_pair = [ownship, intruder]
 
     surrounding_flight = [None] * ((len(allFlight)) - 2)
     idx = 0
@@ -143,7 +142,7 @@ def GenerateAScenario():
 
 # ============================
 # Generate data frame
-
+html_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/'
 output_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/'
 N = 20
 demos = ['1']
@@ -155,3 +154,12 @@ for count in demos:
         WriteData(i, df, ownship, intruder, surrounding_flight)
     df.to_csv( output_path + 'dataset_' + count + '_scenario.csv', index=False)
     df.to_json(output_path + 'dataset_' + count + '_scenario.json', orient='records')
+
+# create demo.js from json string
+jsonf = open(output_path + 'dataset_' + count + '_scenario.json', 'r')
+json_content = jsonf.readline()
+jsonf.close()
+
+jsf = open(html_path + 'js/2.5d/demo.js', 'w+')
+jsf.write('let demoData = ' + json_content + ';')
+jsf.close()
