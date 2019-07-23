@@ -28,12 +28,12 @@ function transform(flight, type) {
 }
 // Function to parse data received from node server or from file upload
 function ParseScenarioData(data) {    
-    console.log(data);
+    // console.log(data);
     if (data.data_origin === 'JavaScriptInterface' | !data) {
-        console.log('test point 01');
+        // console.log('test point 01');
         return data
     }
-    console.log('test point 02');
+    // console.log('test point 02');
     try {
         data.surrounding_flight  = JSON.parse(data.surrounding_flight);
         if (flipY) {
@@ -63,7 +63,11 @@ function LoadConflictFlight(currentScenario) {
     intruderSide.lastSegment.point  = [ sideViewOrigin.x + intruderTop.length, (sideViewOrigin.y + currentScenario.intruder_level * sideLevelStep).transY() ];
     intruderEntryMarkerSide.position = intruderSide.firstSegment.point;
     // flight level
-    intruderLevel = currentScenario.intruder_level;
+    if (!levelAllFlight) {
+        intruderLevel = currentScenario.intruder_level;
+    } else {
+        intruderLevel = 0;   
+    }    
     intruderPointLevel = intruderLevel * 100 * feet2nm * nm2point;
     
     // OWNSHIP:
@@ -78,7 +82,11 @@ function LoadConflictFlight(currentScenario) {
     ownshipSide.lastSegment.point  = [ sideViewOrigin.x + ownshipTop.length, (sideViewOrigin.y + currentScenario.ownship_level * sideLevelStep).transY() ];
     ownshipEntryMarkerSide.position  = ownshipSide.firstSegment.point;
     // flight level
-    ownshipLevel = currentScenario.ownship_level;
+    if (!levelAllFlight) {
+        ownshipLevel = currentScenario.ownship_level;    
+    } else {
+        ownshipLevel = 0;    
+    }    
     ownshipPointLevel = ownshipLevel * 100 * feet2nm * nm2point;
     ownshipNewPointLevel = ownshipPointLevel;
     
@@ -136,8 +144,12 @@ function LoadSurroundingFlight(currentScenario) {
         viewLink[i].children[1].position = srdFlightSide[i].firstSegment.point.add(-15, 0);
         viewLink[i].children[1].content = i.toString();
         // flight level
-        srdLevel[i] = currentScenario.surrounding_flight[i].flight_level;
-        srdLevelSafe[i] = math.abs(srdLevel[i] - currentScenario.ownship_level) > 10;
+        if (!levelAllFlight) {
+            srdLevel[i] = currentScenario.surrounding_flight[i].flight_level;            
+        } else {
+            srdLevel[i] = 0;       
+        }
+        srdLevelSafe[i] = math.abs(srdLevel[i] - ownshipLevel) > 10;
         srdPointLevel[i] = srdLevel[i] * 100 * feet2nm * nm2point;
     }  
     srdFlightHeading = srdFlightTop.map(function(e) { return findFlightHeading(e) }); 
@@ -302,7 +314,7 @@ function SpaceCpaCalculator(begin1, end1, speed1, begin2, end2, speed2) {
 }
 
 // Function to detect conflict between lateral reslolution and intruder
-function LateralConflictDetector(ownship, ownshipPointLevel, ownshipSpeed, intruder, intruderPointLevel, intruderSpeed) {
+function LateralConflictDetector(ownship, ownshipPointLevel, ownshipSpeed, intruder, intruderPointLevel, intruderSpeed) {    
     let cpaResult = [];
     let begin2 = Construct3DPoint(intruder.firstSegment.point, intruderPointLevel);
     let end2 = Construct3DPoint(intruder.lastSegment.point , intruderPointLevel);
@@ -802,14 +814,14 @@ function findFlightHeading(flightPath) {
         y1 = flightPath.segments[0].point.y;
         x2 = flightPath.segments[1].point.x;
         y2 = flightPath.segments[1].point.y;
-        console.log("case 1: original flight heading");
+        // console.log("case 1: original flight heading");
     }
     else {
         x1 = flightPath.point1.x;
         y1 = flightPath.point1.y;
         x2 = flightPath.point2.x;
         y2 = flightPath.point2.y;  
-        console.log("case 2: resolution flight heading");
+        // console.log("case 2: resolution flight heading");
     }
     if ( x2 != x1 ) {
         angle = math.atan2((y2 - y1), (x2 - x1));
