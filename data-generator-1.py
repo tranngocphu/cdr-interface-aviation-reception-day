@@ -38,10 +38,82 @@ minLength = sectorRadius * 1.2
 
 # Actual generation of data
 
+def GenerateScenarioSingleLayer(flightNum):
+    flightLevel = [0] * flightNum
+    flightEntryTime = random.sample(range(0, maxTimeShift), flightNum)
+    flightEntryTime[1] = maxTimeShift
+    allFlight = [None] * flightNum
+
+    allFlight[0] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[0], maxTimeShift, speed, flightLevel[0], feet2point)
+    
+    # generating all flights with no conflict
+    for i in range(1, flightNum):
+        checkAgainst = np.arange(0, i)
+        loop = 0
+        while True:
+            print('Generating %sth flight. Loop %s' % (i, loop))
+            continue_while = False
+            allFlight[i] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[i], maxTimeShift, speed, flightLevel[i], feet2point)
+            for j in checkAgainst:
+                try:
+                    conflict = LateralConflictDetector(allFlight[i], allFlight[j], cpa_threshold)
+                except RuntimeWarning:
+                    continue_while = True
+                    break
+                if conflict[0]:
+                    continue_while = True
+                    break
+            if continue_while:
+                loop += 1
+                continue
+            break
+    
+    conflict_config = [False] * flightNum
+    conflict_config[0] = True  
+    conflict_result = [False] * flightNum
+    
+    ownshipIdx = 1
+
+    next_while_loop = False
+    loop = 0
+
+    while True:
+        print('Generate onwship:', loop)
+        allFlight[ownshipIdx] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[ownshipIdx], maxTimeShift, speed, flightLevel[ownshipIdx], feet2point)
+        for i in range(0, flightNum):
+            if i == 1: 
+                continue
+            try:
+                conflict = LateralConflictDetector(allFlight[ownshipIdx], allFlight[i], cpa_threshold)
+                conflict_result[i] = conflict[0]                
+            except RuntimeWarning:
+                next_while_loop = True
+                break
+        print(loop, conflict_result == conflict_config, conflict_result)
+        if conflict_result == conflict_config:
+            break
+        if next_while_loop:
+            loop += 1
+            continue
+        
+    ownship = allFlight[1]
+    intruder = allFlight[0]
+    surrounding_flight = []
+
+    # convert to FLIGHT object for JSON serialization
+    for i in range(2, flightNum):
+        surrounding_flight.append(SurroundingFlight(allFlight[i]))
+    
+    # convert to list of JSON list, then join list to one JSON string
+    surrounding_flight = [json.dumps(flight.__dict__) for flight in surrounding_flight]
+    surrounding_flight = '[%s]' % ','.join(surrounding_flight)
+
+    return ownship, intruder, surrounding_flight
+
 def GenerateAScenario():
     # ============================================
     # Number of flights in sector & flight indeces
-    flightNum = 9  # should be multiplication of 3
+    flightNum = 6  # should be multiplication of 3
     lowerIdx = np.arange(int(flightNum / 3))
     middleIdx = lowerIdx + int(flightNum / 3)
     upperIdx = middleIdx + int(flightNum / 3)
@@ -51,11 +123,6 @@ def GenerateAScenario():
     lowerLevel = random.sample(range(0, 14), 3)  # excluding right end
     middleLevel = random.sample(range(14, 24), 3)  # excluding right end
     upperLevel = random.sample(range(24, 38), 3)  # excluding right end
-
-    # the below three lines force all levels to be THE SAME (not considering vertical dimension)
-    # lowerLevel = [0, 0, 0]
-    # middleLevel = [0, 0, 0] 
-    # upperLevel = [0, 0, 0] 
 
     flightLevel = lowerLevel + middleLevel + upperLevel
 
@@ -144,19 +211,22 @@ def GenerateAScenario():
 # Generate data frame
 html_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/'
 output_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/'
-N = 20
-demos = ['1']
-for count in demos:
-    df = pd.DataFrame()
-    for i in range(0, N):
-        print('%s: %s' % (count, i))
-        ownship, intruder, surrounding_flight = GenerateAScenario()
-        WriteData(i, df, ownship, intruder, surrounding_flight)
-    df.to_csv( output_path + 'dataset_' + count + '_scenario.csv', index=False)
-    df.to_json(output_path + 'dataset_' + count + '_scenario.json', orient='records')
+N = 100 # number of scenarios
+n = 5 # number of flights in a scenario
+
+filename = 'aviation_house_demo_data_' + str(n) + '_flights_' + str(N) +'_scenarios'
+
+df = pd.DataFrame()
+
+for i in range(0, N):
+    ownship, intruder, surrounding_flight = GenerateScenarioSingleLayer(n)
+    WriteData(i, df, ownship, intruder, surrounding_flight)
+
+df.to_csv( output_path + filename + '.csv', index=False)
+df.to_json(output_path + filename + '.json', orient='records')
 
 # create demo.js from json string
-jsonf = open(output_path + 'dataset_' + count + '_scenario.json', 'r')
+jsonf = open(output_path + filename + '.json', 'r')
 json_content = jsonf.readline()
 jsonf.close()
 
