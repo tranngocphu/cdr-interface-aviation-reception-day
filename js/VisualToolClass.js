@@ -12,7 +12,7 @@ class VISUALTOOL {
         this.ThickStroke = 3;
         this.ThickerStroke = 8;
         this.DashLineStyle = [5,3];
-        this.ViewSize = 750; // Size of drawing space
+        this.ViewSize = 660; // Size of drawing space
         this.GridStep = this.ViewSize / 20;
         this.PointMarkerSize = 5;
         this.AircraftSize = 8;

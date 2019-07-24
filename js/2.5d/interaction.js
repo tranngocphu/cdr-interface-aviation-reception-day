@@ -250,7 +250,7 @@ srdEntryMarkerSide.map(function ShowViewLink (element) {
 })
 srdEntryMarkerTop.map(function ShowViewLink (element) {
     element.onMouseDown = function (event) {
-        console.log(element.idx);
+        console.log(element.idx, ">>", element.position.x);
         // viewLink[element.idx].visible = !viewLink[element.idx].visible;
     };
     return element

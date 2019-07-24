@@ -38,7 +38,7 @@ let vs = new VISUALTOOL();
 // Important physical interface global parameters
 const pi = math.pi;
 const hidden = new Point(0, 0); // a hidden point position
-const sectorRadius = 320; // in drawing point unit, must be consistent with python code
+const sectorRadius = 330; // in drawing point unit, must be consistent with python code
 const nm2point = sectorRadius / 50; // Radius of the circular sector is 50 NM, equivelant to sectorRadius in drawing screen point
 const point2nm = 1 / nm2point;
 const nm2feet = 6076.12;
@@ -52,7 +52,7 @@ let handleDistanceX = defaultHandleDistanceX;
 
 // Paper setup
 let canvas = document.getElementById('myCanvas');
-let margin = 10; // must be consistent with python code
+let margin = 0; // must be consistent with python code
 let paperWidth = 660;
 let paperHeight = 660;
 canvas.width = paperWidth;
@@ -67,7 +67,7 @@ $('#vertical-scale').html(math.round(verticalScale).toString() + '/1');
 
 
 // Drawing origins
-let viewGap = 50;
+let viewGap = 0;
 let topViewOrigin = new Point(0, 0); // coords (0, 0) as seen in the normal scientific graph coordinates (Y-axis points up)
 let topViewWidth = paperHeight;
 let sideViewOrigin = new Point(topViewOrigin.x + topViewWidth + viewGap, 2 * margin); // as seen in the normal scientific graph coordinates (Y-axis points up)

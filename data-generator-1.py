@@ -9,203 +9,135 @@ import warnings
 import json
 from copy import deepcopy
 from pprint import pprint
+import matplotlib.pyplot as plt
 
 pd.set_option('display.max_rows', 10)
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 1000)
 warnings.filterwarnings("error")
 sys.path.insert(0, '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/python-code/python_lib')
-from function_lib import RandomizeFlight, LateralConflictDetector, SurroundingFlight, WriteData
+from function_lib import RandomizeFlight, LateralConflictDetector, SurroundingFlight, WriteData, SurroundingLateralConflictDetector
 
 # Vars and Funcs declaration
 
 # the following vars must be consistent with js code
-sectorRadius = 320  # in drawing point unit
+sectorRadius = 330  # in drawing point unit
 # Radius of the circular sector is 50 NM, equivelant to sectorRadius in drawing screen point
 nm2point = sectorRadius / 50
 nm2feet = 6076.12
 feet2nm = 1 / nm2feet
 feet2point = feet2nm * nm2point
-margin = 10
-paperWidth = 1900
+margin = 0
+paperWidth = 660
 paperHeight = 660
 sectorCenter = np.array([sectorRadius + margin, paperHeight / 2])
 cpa_threshold = 5 * nm2point
 speed = 450 * nm2point / 3600
 maxTimeShift = int(np.round(2 * sectorRadius / speed / 3))
 minLength = sectorRadius * 1.2
+minTime2Cpa = 360
+maxLoopAllowed = 5000
+
 
 
 # Actual generation of data
-
 def GenerateScenarioSingleLayer(flightNum):
+    ownshipIdx = 1
     flightLevel = [0] * flightNum
     flightEntryTime = random.sample(range(0, maxTimeShift), flightNum)
-    flightEntryTime[1] = maxTimeShift
-    allFlight = [None] * flightNum
-
-    allFlight[0] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[0], maxTimeShift, speed, flightLevel[0], feet2point)
+    flightEntryTime[ownshipIdx] = maxTimeShift
+    allFlight = []
     
-    # generating all flights with no conflict
-    for i in range(1, flightNum):
-        checkAgainst = np.arange(0, i)
+    # generating all surrounding flights with no conflict
+    for i in range(0, flightNum):
         loop = 0
         while True:
-            print('Generating %sth flight. Loop %s' % (i, loop))
-            continue_while = False
-            allFlight[i] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[i], maxTimeShift, speed, flightLevel[i], feet2point)
-            for j in checkAgainst:
-                try:
-                    conflict = LateralConflictDetector(allFlight[i], allFlight[j], cpa_threshold)
-                except RuntimeWarning:
-                    continue_while = True
-                    break
-                if conflict[0]:
-                    continue_while = True
-                    break
-            if continue_while:
+            newFlight = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[i], maxTimeShift, speed, flightLevel[i], feet2point)
+            try:
+                conflicts = [ SurroundingLateralConflictDetector(newFlight, existingFlight, cpa_threshold, 'surrounding')[0] for existingFlight in allFlight ] 
+                print('Generating %sth Surrounding Aircraft:' % i, conflicts)       
+            except RuntimeWarning:
                 loop += 1
                 continue
+            if any(conflicts):
+                loop += 1
+                continue            
+            allFlight.append(newFlight)
             break
-    
-    conflict_config = [False] * flightNum
-    conflict_config[0] = True  
-    conflict_result = [False] * flightNum
-    
-    ownshipIdx = 1
-
-    next_while_loop = False
-    loop = 0
-
-    while True:
-        print('Generate onwship:', loop)
-        allFlight[ownshipIdx] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[ownshipIdx], maxTimeShift, speed, flightLevel[ownshipIdx], feet2point)
-        for i in range(0, flightNum):
-            if i == 1: 
-                continue
-            try:
-                conflict = LateralConflictDetector(allFlight[ownshipIdx], allFlight[i], cpa_threshold)
-                conflict_result[i] = conflict[0]                
-            except RuntimeWarning:
-                next_while_loop = True
-                break
-        print(loop, conflict_result == conflict_config, conflict_result)
-        if conflict_result == conflict_config:
-            break
-        if next_while_loop:
-            loop += 1
-            continue
         
+    
+    test_mask = [True] + [False] * (flightNum - 2)
+    loop = 0
+    againstFlight = [ allFlight[i] for i in range(0, flightNum) if i != 1 ]  # this is allFlight except position of ownship
+    
+    while True:
+        if loop == maxLoopAllowed:
+            return False, False, False, False
+        ownship = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[ownshipIdx], maxTimeShift, speed, flightLevel[ownshipIdx], feet2point)
+        try:
+            conflicts = [ SurroundingLateralConflictDetector(ownship, existingFlight, cpa_threshold) for existingFlight in againstFlight ]  
+            conflict_bool = [ conflict[0] for conflict in conflicts ]             
+        except RuntimeWarning:
+            print('Generating ownship', loop, 'Runtime Warning')
+            loop += 1
+            continue        
+        if conflict_bool == test_mask:
+            if conflicts[0][5] == 4 or conflicts[0][2] < minTime2Cpa:
+                loop += 1
+                print(loop, "Conflict at beginning or too close, skip.")
+                continue
+            else:
+                print('Generating ownship', loop, conflict_bool == test_mask, conflict_bool)
+                allFlight[1] = ownship
+                break
+        loop += 1
+
+    
     ownship = allFlight[1]
     intruder = allFlight[0]
     surrounding_flight = []
 
     # convert to FLIGHT object for JSON serialization
-    for i in range(2, flightNum):
-        surrounding_flight.append(SurroundingFlight(allFlight[i]))
+    for i in range(2, n):
+        surrounding_flight.append(json.dumps(SurroundingFlight(allFlight[i]).__dict__))
     
     # convert to list of JSON list, then join list to one JSON string
-    surrounding_flight = [json.dumps(flight.__dict__) for flight in surrounding_flight]
+    # surrounding_flight = [json.dumps(flight.__dict__) for flight in surrounding_flight]
     surrounding_flight = '[%s]' % ','.join(surrounding_flight)
+        
+    return ownship, intruder, surrounding_flight, allFlight
 
-    return ownship, intruder, surrounding_flight
 
-def GenerateAScenario():
-    # ============================================
-    # Number of flights in sector & flight indeces
-    flightNum = 6  # should be multiplication of 3
-    lowerIdx = np.arange(int(flightNum / 3))
-    middleIdx = lowerIdx + int(flightNum / 3)
-    upperIdx = middleIdx + int(flightNum / 3)
-
-    # =============================================
-    # Flight levels
-    lowerLevel = random.sample(range(0, 14), 3)  # excluding right end
-    middleLevel = random.sample(range(14, 24), 3)  # excluding right end
-    upperLevel = random.sample(range(24, 38), 3)  # excluding right end
-
-    flightLevel = lowerLevel + middleLevel + upperLevel
-
-    # =============================================
-    # Flight Entry Time
-    lowerEntryTime = random.sample(range(0, maxTimeShift), 3)
-    middleEntryTime = random.sample(range(0, maxTimeShift), 3)
-    upperEntryTime = random.sample(range(0, maxTimeShift), 3)
-    middleEntryTime[1] = maxTimeShift
-    flightEntryTime = lowerEntryTime + middleEntryTime + upperEntryTime
-
-    # =============================================
-    # Generation of flight paths
-    allFlight = [None] * flightNum
-
-    # Generate all flight, no conflict in each layer
-    layerIdx = [lowerIdx, middleIdx, upperIdx]
-    for currentLayerIdx in layerIdx:
-        #        print('Layer:', currentLayerIdx)
-        allFlight[currentLayerIdx[0]] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[currentLayerIdx[0]], maxTimeShift, speed, flightLevel[currentLayerIdx[0]], feet2point)
-        for i in currentLayerIdx[1:]:
-            checkAgainst = np.arange(currentLayerIdx[0], i)
-            loop = 0
-            while True:
-                # print('Generating %sth flight. Loop %s' % (i, loop))
-                continue_while = False
-                allFlight[i] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[i], maxTimeShift, speed, flightLevel[i], feet2point)
-                for j in checkAgainst:
-                    try:
-                        conflict = LateralConflictDetector(allFlight[i], allFlight[j], cpa_threshold)
-                    except RuntimeWarning:
-                        continue_while = True
-                        break
-                    if conflict[0]:
-                        continue_while = True
-                        break
-                if continue_while:
-                    loop += 1
-                    continue
-                break
-
-    # Add conflict to middle layer
-    ownshipIdxInMiddle = 1  # for numFlight = 9 particularly
-    middleIntruderIdx = np.delete(middleIdx, ownshipIdxInMiddle)
-    ownshipIdx = middleIdx[ownshipIdxInMiddle]
-    stop = False
-    loop = 0
-    while True:
-        # print('Generate onwship:', loop)
-        allFlight[ownshipIdx] = RandomizeFlight(sectorCenter, sectorRadius, minLength, flightEntryTime[ownshipIdx], maxTimeShift, speed, flightLevel[ownshipIdx], feet2point)
-        for intruderIdx in middleIntruderIdx:
-            # print(intruderIdx)
-            try:
-                conflict = LateralConflictDetector(allFlight[ownshipIdx], allFlight[intruderIdx], cpa_threshold)
-                print(conflict)
-            except RuntimeWarning:
-                stop = True
-                break
-            if conflict[0]:
-                stop = True
-                break
-        if stop:
-            break
-        loop += 1
-
-    ownship = allFlight[ownshipIdx]
-    intruder = allFlight[intruderIdx]
-    # conflict_pair = [ownship, intruder]
-
-    surrounding_flight = [None] * ((len(allFlight)) - 2)
-    idx = 0
-    for i in range(0, len(allFlight)):
-        if i == ownshipIdx or i == intruderIdx:
+def PlotScenario(scen_id, allFlight, seed, skip = []):
+    fig, ax = plt.subplots(figsize=(8,8))
+    circle = plt.Circle((sectorCenter[0], sectorCenter[1]), sectorRadius, color='gray', fill=False)
+    i = 0
+    for flight in allFlight:
+        if i in skip:
+            i += 1
             continue
-        surrounding_flight[idx] = SurroundingFlight(allFlight[i])  # convert to FLIGHT object for JSON serialization
-        idx += 1
+        if i == 0:
+            color = 'red'
+        elif i == 1:
+            color = 'blue'
+        else:
+            color = 'gray'
+        ax.add_artist(circle)
+        ax.plot([flight.sync_point_x, flight.exit_x], [flight.sync_point_y, flight.exit_y], color=color, linewidth=2)
+        ax.scatter(flight.sync_point_x, flight.sync_point_y, s=40, c=color )
+        i += 1
+    ax.set_xlim(0, 660)
+    ax.set_ylim(0, 660)
+    ax.set_aspect('equal')
+    title = 'Seed:' + str(seed)
+    ax.set_title(title)
+    plt.savefig('data/%d.png' % scen_id, dpi=150, bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
 
-    # convert to list of JSON list, then join list to one JSON string
-    surrounding_flight = [json.dumps(flight.__dict__) for flight in surrounding_flight]
-    surrounding_flight = '[%s]' % ','.join(surrounding_flight)
 
-    return ownship, intruder, surrounding_flight
-
+def DoubleCheckConflict(ownship, intruder):
+    check, case = LateralConflictDetector(ownship, intruder, cpa_threshold)
+    return check, case
 
 # ============================
 # Generate data frame
@@ -218,8 +150,19 @@ filename = 'aviation_house_demo_data_' + str(n) + '_flights_' + str(N) +'_scenar
 
 df = pd.DataFrame()
 
+used_seed = []
+
 for i in range(0, N):
-    ownship, intruder, surrounding_flight = GenerateScenarioSingleLayer(n)
+    while True:
+        myseed = random.randint(0, 500)
+        if myseed not in used_seed:
+            used_seed.append(myseed)
+            break
+    random.seed(myseed)
+    ownship = False
+    while not ownship:
+        ownship, intruder, surrounding_flight, allFlight = GenerateScenarioSingleLayer(n)
+    # PlotScenario(i, allFlight, myseed)  
     WriteData(i, df, ownship, intruder, surrounding_flight)
 
 df.to_csv( output_path + filename + '.csv', index=False)
@@ -233,3 +176,14 @@ jsonf.close()
 jsf = open(html_path + 'js/2.5d/demo.js', 'w+')
 jsf.write('let demoData = ' + json_content + ';')
 jsf.close()
+
+seedf = open(output_path + filename + '_SEED.txt', 'w+')
+seedf.write(str(used_seed))
+seedf.close()
+
+# # Double check conflict detection module
+
+# check, case = DoubleCheckConflict(allFlight[7], allFlight[8])
+# print(case)
+# print(check)
+# print("Done")
