@@ -10,13 +10,16 @@ import json
 from copy import deepcopy
 from pprint import pprint
 import matplotlib.pyplot as plt
+from itertools import product
+from copy import deepcopy
 
 pd.set_option('display.max_rows', 10)
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 1000)
+
 warnings.filterwarnings("error")
 sys.path.insert(0, '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/python-code/python_lib')
-from function_lib import RandomizeFlight, LateralConflictDetector, SurroundingFlight, WriteData, SurroundingLateralConflictDetector
+from function_lib import *
 
 # Vars and Funcs declaration
 
@@ -139,51 +142,125 @@ def DoubleCheckConflict(ownship, intruder):
     check, case = LateralConflictDetector(ownship, intruder, cpa_threshold)
     return check, case
 
-# ============================
+
+def GenerateConflictMap(all_flight, sector_radius, grid_size, safe_dist) :
+
+    ownship = all_flight[1] 
+
+    all_flight.pop(1)  # remove the ownship from all_flight, this array becomes potential intruders
+    
+    idx = range(0, grid_size)
+    
+    grid_step = sector_radius * 2 / ( grid_size - 1 )
+
+    conflict_map = np.empty( [grid_size, grid_size] )
+
+    for i, j in product(idx, idx) :
+
+        x = i * grid_step
+
+        y = j * grid_step
+        
+        if np.sqrt( (x - sector_radius) ** 2 + (y - sector_radius) ** 2 ) > sector_radius :
+            
+            conflict_map[i, j] = -1  # outside the circel
+            
+            continue
+
+        # clone the ownship as a resolution and adjust the midle point if the resolution to be current position x, y
+        resolution = deepcopy(ownship)
+        resolution.middle_x = x
+        resolution.middle_y = y
+        resolution.middle = np.array([x, y])
+        resolution.first_segment = np.linalg.norm(resolution.entry - resolution.middle)
+        resolution.second_segment = np.linalg.norm(resolution.middle - resolution.exit)
+        resolution.first_dir = (resolution.middle - resolution.entry) / resolution.first_segment
+        resolution.second_dir = (resolution.exit - resolution.middle) / resolution.second_segment
+        resolution.exit_time = resolution.entry_time + (resolution.first_segment + resolution.second_segment) / resolution.speed
+        resolution.sync_point = resolution.entry + resolution.first_dir * resolution.sync_offset
+        resolution.sync_point_x = resolution.sync_point[0]
+        resolution.sync_point_y = resolution.sync_point[1]
+        resolution.sync_to_turn = np.linalg.norm(resolution.sync_point - resolution.middle)
+
+        conflicts = [ LateralConflictDetector(resolution, intruder, safe_dist)[0] for intruder in all_flight ]
+
+        if any(conflicts) :
+            
+            # at least one conflict
+            conflict_map[i, j] = 1
+            
+        else :
+
+            # no conflict
+            conflict_map[i, j] = 0
+
+    return conflict_map
+
+
+
+# ===================================================
+
 # Generate data frame
 html_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/'
 output_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/'
+
 N = 100 # number of scenarios
-n = 5 # number of flights in a scenario
+n = 9 # number of flights in a scenario
 
-filename = 'aviation_house_demo_data_' + str(n) + '_flights_' + str(N) +'_scenarios'
-
-df = pd.DataFrame()
+scenario_df = pd.DataFrame()
 
 used_seed = []
 
-for i in range(0, N):
+all_conflict_map_df = pd.DataFrame()
+
+for i in range(0, N): # scenarios loop
+
+    print("\n\n\n\n", i)
+    
     while True:
         myseed = random.randint(0, 500)
         if myseed not in used_seed:
             used_seed.append(myseed)
             break
+    
     random.seed(myseed)
+    
     ownship = False
     while not ownship:
-        ownship, intruder, surrounding_flight, allFlight = GenerateScenarioSingleLayer(n)
+        ownship, intruder, surrounding_flight, all_flight = GenerateScenarioSingleLayer(n)
+    
     # PlotScenario(i, allFlight, myseed)  
-    WriteData(i, df, ownship, intruder, surrounding_flight)
+    WriteData(i, scenario_df, ownship, intruder, surrounding_flight)   # write data to df dataframe
 
-df.to_csv( output_path + filename + '.csv', index=False)
-df.to_json(output_path + filename + '.json', orient='records')
+    # generate conflict map
+    conflict_map = GenerateConflictMap(all_flight, sectorRadius, 200, cpa_threshold)
+    conflict_map = pd.DataFrame(conflict_map)
+    conflict_map['scen_id'] = i
+    all_conflict_map_df = all_conflict_map_df.append(conflict_map, sort=False, ignore_index=True)
 
-# create demo.js from json string
-jsonf = open(output_path + filename + '.json', 'r')
-json_content = jsonf.readline()
-jsonf.close()
 
-jsf = open(html_path + 'js/2.5d/demo.js', 'w+')
-jsf.write('let demoData = ' + json_content + ';')
-jsf.close()
+write_to_file = True
 
-seedf = open(output_path + filename + '_SEED.txt', 'w+')
-seedf.write(str(used_seed))
-seedf.close()
+filename = '15Aug19_demo_data_' + str(n) + '_flights_' + str(N)
 
-# # Double check conflict detection module
+if write_to_file :
 
-# check, case = DoubleCheckConflict(allFlight[7], allFlight[8])
-# print(case)
-# print(check)
-# print("Done")
+    # write scenario df
+    scenario_df.to_csv( output_path + filename + '_scenarios.csv', index=False)
+    scenario_df.to_json( output_path + filename + '_scenarios.json', orient='records')
+
+    # write conflict map df
+    all_conflict_map_df.to_csv( output_path + filename + '_conflict_map.csv', index=False)
+
+    # create demo.js from json string
+    jsonf = open(output_path + filename + '_scenarios.json', 'r')
+    json_content = jsonf.readline()
+    jsonf.close()
+
+    jsf = open(html_path + 'js/2.5d/demo.js', 'w+')
+    jsf.write('let demoData = ' + json_content + ';')
+    jsf.close()
+
+    seedf = open(output_path + filename + '_SEED.txt', 'w+')
+    seedf.write(str(used_seed))
+    seedf.close()
