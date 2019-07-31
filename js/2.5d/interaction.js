@@ -49,6 +49,8 @@ inputTool.onMouseUp = function GlobalMouseUp (event) {
         performingLateralSeparation = false;  
         AutoPlayResolution();
     }
+    console.log("mouse button released");
+    console.log(ownshipLateralResTop.segments[1].point.x, "" , ownshipLateralResTop.segments[1].point.y);
 }
 
 

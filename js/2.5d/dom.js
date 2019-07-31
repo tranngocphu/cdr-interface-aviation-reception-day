@@ -254,3 +254,65 @@ $('#show-side-view').change(function ShowTopView(){
 $('#show-3d-view').change(function ShowTopView(){
     Show3d(!show3DState);
 })
+
+
+/* 
+ * NEXT and BACK button (added on 31 Jul)
+ */
+
+$("#current-scen").prop("disabled", true);
+
+ function next() {
+     console.log("Next btn hit.");
+
+    if ( !allScen ) {
+        
+        return;
+    
+    } else {
+
+        if ( $("#current-scen").val() < allScen.length ) {
+
+            $("#current-scen").val( Number($("#current-scen").val()) + 1 );
+            $("#current-scen").trigger("change");
+    
+        }
+
+    }
+ }
+
+ function back() {
+    console.log("Back btn hit.");
+
+   if ( !allScen ) {
+       
+       return;
+   
+   } else {
+
+       if ( $("#current-scen").val() > 1 ) {
+
+           $("#current-scen").val( Number($("#current-scen").val()) - 1 );
+           $("#current-scen").trigger("change");
+   
+       }
+
+   }
+}
+
+
+function record_db() {
+
+    var data = "id=" +  $("#current-scen").val(); 
+    data += "&x=" + Math.round(ownshipLateralResTop.segments[1].point.x).toString();
+    data += "&y=" + Math.round(ownshipLateralResTop.segments[1].point.y).toString();
+    
+    $.get("php-handler/save-location.php?" + data)
+    .done(function(data) {
+        
+        console.log(data);
+
+        $("#next-btn-1").trigger("click");
+    
+    });
+}

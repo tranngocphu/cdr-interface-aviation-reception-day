@@ -44,6 +44,13 @@
             <div class="form-group row">
               <label class="col-sm-12 col-form-label">Current/Total Scen: <input type="number" id="current-scen" min="1" value="" style="width: 3em"> / <span id="all-scen">No data loaded</span></label>            
             </div>
+            <div class="form-group row">
+              <label class="col-sm-12 col-form-label" for="input-file">
+                <button type="button" class="" id="back-btn-1" onclick="back();">BACK</button>   
+                <button type="button" class="" id="next-btn-1" onclick="next();">NEXT</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="button" class="" id="save-location" onclick="record_db();">SAVE THIS LOCATION</button>             
+              </label>
+            </div>
             <div class="form-group row" hidden>
               <div class="col-sm-12">
                 <label class="">Show Views:&nbsp;&nbsp;</label>
