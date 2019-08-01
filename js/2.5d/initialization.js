@@ -51,9 +51,9 @@ let handleDistanceX = defaultHandleDistanceX;
 
 
 // Paper setup
-let canvas = document.getElementById('myCanvas');
+let canvas = $('#myCanvas');
 let margin = 0; // must be consistent with python code
-let paperWidth = 660;
+let paperWidth = 1200;
 let paperHeight = 660;
 canvas.width = paperWidth;
 canvas.height = paperHeight;
@@ -680,14 +680,14 @@ let lateralTopLeftCover = new Path.Rectangle({
     visible: true
 })
 
-let lateralBottomRightCover = new Path.Rectangle({
-    point: [610, 610],
-    size: [50, 50],
-    fillColor: 'white',
-    strokeColor: '',
-    strokeWidth: 0,
-    visible: true
-})
+// let lateralBottomRightCover = new Path.Rectangle({
+//     point: [610, 610],
+//     size: [50, 50],
+//     fillColor: 'white',
+//     strokeColor: '',
+//     strokeWidth: 0,
+//     visible: true
+// })
 
 
 // Reorder (z position) all graphical elements
@@ -707,7 +707,7 @@ intruderLos.bringToFront();
 topViewCover.bringToFront();
 // sideVerticalLine.bringToFront();
 sideViewCover.bringToFront();
-lateralBottomRightCover.bringToFront();
+// lateralBottomRightCover.bringToFront();
 lateralTopLeftCover.bringToFront();
 
 
