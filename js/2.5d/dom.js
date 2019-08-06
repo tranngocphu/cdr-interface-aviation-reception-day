@@ -26,6 +26,7 @@ $('#input-file').change(function ButtonInputFile() {
         $('#all-scen').html(allScen.length);
         $('#current-scen').val(0);
         showConflictIndicator = true;
+        visual_indicator_cover.visible = false;
         console.log('Finished loading data of ' + allScen.length + ' scenarios.');
         $('#next-btn').prop('disabled', false);           
         $('#prev-btn').prop('disabled', false);
@@ -48,6 +49,7 @@ $('#demo-data').click(function LoadDemoData (){
     $('#all-scen').html(allScen.length);
     $('#current-scen').val(0);
     showConflictIndicator = true;
+    visual_indicator_cover.visible = false;
     console.log('Finished loading data of ' + allScen.length + ' scenarios.');
     $('#next-btn').prop('disabled', false);           
     $('#prev-btn').prop('disabled', false);
@@ -273,6 +275,7 @@ $("#current-scen").prop("disabled", true);
             $("#current-scen").val( Number($("#current-scen").val()) + 1 );
             if ( $("#current-scen").val() > 10 ) {
                 showConflictIndicator = false;
+                visual_indicator_cover.visible = true;
             } 
             $("#current-scen").trigger("change");   
         }
@@ -288,6 +291,7 @@ $("#current-scen").prop("disabled", true);
             $("#current-scen").val( Number($("#current-scen").val()) - 1 );
                 if ( $("#current-scen").val() <= 10 ) {
                     showConflictIndicator = true;
+                    visual_indicator_cover.visible = false;
                 } 
             $("#current-scen").trigger("change");   
         }
