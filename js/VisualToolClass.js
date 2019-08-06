@@ -24,6 +24,7 @@ class VISUALTOOL {
         this.AniLayer  = new paper.Layer({ id: 4, name: 'aniLayer'  });
         this.IndLayer  = new paper.Layer({ id: 5, name: 'indLayer'  });
         this.TopLayer  = new paper.Layer({ id: 6, name: 'topLayer'  });
+        this.InfoLayer  = new paper.Layer({ id: 7, name: 'infoLayer'  });
         // this.TmpLayer  = new paper.Layer({ id: 6, name: 'TmpLayer'  }); 
         // center of sector
         this.Origin = null; // to be assigned to view.center        

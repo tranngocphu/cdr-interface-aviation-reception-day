@@ -19,6 +19,7 @@ let setting = {
 let showGoodCpa;
 let showResolutionHistory;
 let showPotentialLos;
+let showConflictIndicator;
 
 // Read setting
 function ReadSetting() {
@@ -67,7 +68,7 @@ $('#vertical-scale').html(math.round(verticalScale).toString() + '/1');
 
 
 // Drawing origins
-let viewGap = 0;
+let viewGap = 10;
 let topViewOrigin = new Point(0, 0); // coords (0, 0) as seen in the normal scientific graph coordinates (Y-axis points up)
 let topViewWidth = paperHeight;
 let sideViewOrigin = new Point(topViewOrigin.x + topViewWidth + viewGap, 2 * margin); // as seen in the normal scientific graph coordinates (Y-axis points up)
@@ -664,11 +665,11 @@ let topViewCover = new Path.Rectangle({
 
 let sideViewCover = new Path.Rectangle({
     point: [topViewWidth, 0],
-    size: [sideViewWidth + viewGap, paperHeight],
+    size: [sideViewWidth + viewGap + 10, paperHeight + 10],
     fillColor: 'white',
     strokeColor: '',
     strokeWidth: 0,
-    visible: false
+    visible: true
 });
 
 let lateralTopLeftCover = new Path.Rectangle({
@@ -680,14 +681,9 @@ let lateralTopLeftCover = new Path.Rectangle({
     visible: true
 })
 
-// let lateralBottomRightCover = new Path.Rectangle({
-//     point: [610, 610],
-//     size: [50, 50],
-//     fillColor: 'white',
-//     strokeColor: '',
-//     strokeWidth: 0,
-//     visible: true
-// })
+
+
+
 
 
 // Reorder (z position) all graphical elements
@@ -761,3 +757,89 @@ let autoResolutionPlayer; // this will be assigned to setInterval()
 
 // global var for enable/disable vertical dimension
 let levelAllFlight = true; // set this to true to disable vertical dimension
+
+
+// Visual info about the current resolution
+
+vs.InfoLayer.activate();
+
+let box_origin = new Point(850, 100);
+let box_height = 220;
+let box_width = 250;
+let five_mn_level = box_origin.y + box_height - 44;
+let color_jupm = 2.5;
+
+let separation_box= new Path.Rectangle({
+    point: box_origin,
+    size: [box_width, box_height],
+    fillColor: 'white',
+    strokeColor: 'gray',
+    strokeWidth: 0.5,
+    visible: true
+})
+
+let label_scale = 1.5;
+let title_scale = 2;
+
+var text1 = new PointText(box_origin.add(2, box_height + 60));
+text1.justification = 'center';
+text1.fillColor = 'black';
+text1.content = 'Against Intruder';
+text1.scaling = 1.2;
+text1.rotation = -45;
+text1.scaling = label_scale;
+
+var text2 = new PointText(box_origin.add(45, box_height + 78));
+text2.justification = 'center';
+text2.fillColor = 'black';
+text2.content = 'Against SRD Aircraft 1';
+text2.scaling = 1.2;
+text2.rotation = -45;
+text2.scaling = label_scale;
+
+var text3 = new PointText(box_origin.add(105, box_height + 78));
+text3.justification = 'center';
+text3.fillColor = 'black';
+text3.content = 'Against SRD Aircraft 2';
+text3.scaling = 1.2;
+text3.rotation = -45;
+text3.scaling = label_scale;
+
+var text4 = new PointText(box_origin.add(165, box_height + 78));
+text4.justification = 'center';
+text4.fillColor = 'black';
+text4.content = 'Against SRD Aircraft 3';
+text4.scaling = 1.2;
+text4.rotation = -45;
+text4.scaling = label_scale;
+
+var text5 = new PointText(box_origin.add(box_width/2, -20));
+text5.justification = 'center';
+text5.fillColor = 'black';
+text5.content = 'SEPARATION INDICATORS';
+text5.scaling = title_scale;
+
+let cpa_line = new Path.Line({
+    segments: [[box_origin.x, five_mn_level], [box_origin.x + box_width, five_mn_level]],
+    strokeColor: black,
+    strokeWidth: 2,
+    visible: true, 
+})
+
+
+let los_box = [];
+
+
+for ( i=0; i<4; i++) {
+    los_box[i] = new Path.Rectangle({
+        point: box_origin.add(i*60+10, 0),
+        size: [50, box_height],
+        fillColor: { hue: 360, saturation: 1, lightness: 0.5 },
+        strokeColor: '',
+        strokeWidth: 0,
+        visible: true,
+    })
+}
+
+
+cpa_line.bringToFront();

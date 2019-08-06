@@ -68,3 +68,32 @@ hr {
     color: green;
     font-size: 120%;
 }
+
+
+.res-img {
+    width: 100%;
+}
+
+#res-title {
+    display: block;
+    text-align: center;
+    font-size: 22pt;
+}
+
+#new-train-title {
+    display: block;
+    text-align: center;
+    font-size: 18pt;
+    color: green;
+}
+
+#pre-train-title {
+    display: block;
+    text-align: center;
+    font-size: 18pt;
+    color: blue;
+}
+
+.python-res {
+    margin-bottom: 200px;
+}

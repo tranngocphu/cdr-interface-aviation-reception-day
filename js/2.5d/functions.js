@@ -367,7 +367,7 @@ function DectectAndShowLateralLOS(mode) {
     }    
     for (let i=0; i<surroundingFlight; i++) {
         let los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, srdFlightTop[i], srdPointLevel[i], commonSpeed);        
-        if (los[0]) {                                    
+        if (los[0] && showConflictIndicator) {                                    
             if (!srdLevelSafe[i]) { // intruder level in danger zone, show actual los marker   
                 surroundingLos[i].children[0].segments = [los[3], los[4]];             
                 surroundingLos[i].children[0].strokeColor = red;
@@ -383,7 +383,7 @@ function DectectAndShowLateralLOS(mode) {
                 } else { // hide potential los marker:
                     // surroundingLos[i].children[3].position = hidden;  
                 }
-            }                                   
+            }        
         } else {
             surroundingLos[i].children[0].segments = [los[3], los[4]];
             surroundingLos[i].children[0].strokeColor = black;
@@ -393,11 +393,27 @@ function DectectAndShowLateralLOS(mode) {
             surroundingLos[i].children[2].position = hidden;
             surroundingLos[i].children[3].position = hidden;
         }
+
+        // set height and color of separation box here
+        los_box[i+1].segments[1].point.y = box_origin.y + (box_height - los[1]*1.3333);
+        los_box[i+1].segments[2].point.y = box_origin.y + (box_height - los[1]*1.3333);
+        if ( los_box[i+1].segments[1].point.y < box_origin.y ) {
+            los_box[i+1].segments[1].point.y = box_origin.y;
+            los_box[i+1].segments[2].point.y = box_origin.y;
+        }
+        let hue;
+        if ( los[0] )  {
+            hue = 360;
+        } else {
+            hue = 330 - (los_box[i+1].segments[2].point.y - cpaThreshold * 1.333) / (box_height - cpaThreshold * 1.333) * (255 - 360) * color_jupm;
+        }
+        los_box[i+1].fillColor.hue = hue;
+
     }
     // check against intruder
     los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, intruderTop, intruderPointLevel, commonSpeed);
     intruderLos.children[0].segments = [los[3], los[4]];
-    if (los[0]) {
+    if (los[0] && showConflictIndicator ) {
         intruderLos.children[0].strokeColor = red;
         intruderLos.children[0].dashArray = null;
         intruderLos.children[0].visible = true;
@@ -410,6 +426,22 @@ function DectectAndShowLateralLOS(mode) {
         intruderLos.children[1].position = hidden;
         intruderLos.children[2].position = hidden;
     }
+
+    // set height and color of separation box here
+
+    los_box[0].segments[1].point.y = box_origin.y + (box_height - los[1]*1.3333) ;
+    los_box[0].segments[2].point.y = box_origin.y + (box_height - los[1]*1.3333) ;
+    if ( los_box[0].segments[1].point.y < box_origin.y ) {
+        los_box[0].segments[1].point.y = box_origin.y;
+        los_box[0].segments[2].point.y = box_origin.y;
+    }
+    if ( los[0] )  {
+        hue = 360;
+    } else {
+        hue = 330- (los_box[0].segments[2].point.y - cpaThreshold * 1.333) / (box_height - cpaThreshold * 1.333) * (255 - 360) * color_jupm;
+    }
+    los_box[0].fillColor.hue = hue;
+    
 }
 
 
@@ -866,4 +898,29 @@ function PausePlayingResolution() {
 function ResumePlayingResolution() {
     autoResolutionPlayer = setInterval('AutoMoveAircraftResolution()', 62.5);  
     resolutionPlayingPaused = false; 
+}
+
+
+// Separation box indicator
+
+
+
+function set_height() {
+    for ( i=0; i<4; i++) {
+        los_box[i].segments[1].point.y += 10;
+        los_box[i].segments[2].point.y += 10;
+    }  
+}
+
+function set_color() {
+    for ( i=0; i<4; i++) {
+        los_box[i].fillColor = new Color(255, 255, 0);
+        los_box[i].fillColor = new Color(255, 255, 0);
+    }    
+}
+
+function set_initial_height_sep_box () {
+
+
+
 }

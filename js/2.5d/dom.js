@@ -24,7 +24,8 @@ $('#input-file').change(function ButtonInputFile() {
         allScen.map(function(element) { return ParseScenarioData(element) } );        
         currentScenarioId = 0;    
         $('#all-scen').html(allScen.length);
-        $('#current-scen').val('');
+        $('#current-scen').val(0);
+        showConflictIndicator = true;
         console.log('Finished loading data of ' + allScen.length + ' scenarios.');
         $('#next-btn').prop('disabled', false);           
         $('#prev-btn').prop('disabled', false);
@@ -45,7 +46,8 @@ $('#demo-data').click(function LoadDemoData (){
     currentScenarioId = 0;    
     allScen.map(function(element) { return ParseScenarioData(element) } );        
     $('#all-scen').html(allScen.length);
-    $('#current-scen').val('');
+    $('#current-scen').val(0);
+    showConflictIndicator = true;
     console.log('Finished loading data of ' + allScen.length + ' scenarios.');
     $('#next-btn').prop('disabled', false);           
     $('#prev-btn').prop('disabled', false);
@@ -263,41 +265,33 @@ $('#show-3d-view').change(function ShowTopView(){
 $("#current-scen").prop("disabled", true);
 
  function next() {
-     console.log("Next btn hit.");
-
-    if ( !allScen ) {
-        
-        return;
-    
+    console.log("Next btn hit.");
+    if ( !allScen ) {        
+        return;    
     } else {
-
         if ( $("#current-scen").val() < allScen.length ) {
-
             $("#current-scen").val( Number($("#current-scen").val()) + 1 );
-            $("#current-scen").trigger("change");
-    
+            if ( $("#current-scen").val() > 10 ) {
+                showConflictIndicator = false;
+            } 
+            $("#current-scen").trigger("change");   
         }
-
     }
  }
 
  function back() {
     console.log("Back btn hit.");
-
-   if ( !allScen ) {
-       
-       return;
-   
-   } else {
-
-       if ( $("#current-scen").val() > 1 ) {
-
-           $("#current-scen").val( Number($("#current-scen").val()) - 1 );
-           $("#current-scen").trigger("change");
-   
-       }
-
-   }
+    if ( !allScen ) {       
+        return;   
+    } else {
+        if ( $("#current-scen").val() > 1 ) {
+            $("#current-scen").val( Number($("#current-scen").val()) - 1 );
+                if ( $("#current-scen").val() <= 10 ) {
+                    showConflictIndicator = true;
+                } 
+            $("#current-scen").trigger("change");   
+        }
+    }
 }
 
 

@@ -13,16 +13,16 @@
   <div id="primary-container" class="container-fluid">
     <!-- 2D views -->
     <div id="2D"></div>  
-    <div id="canvas-area" class="row">  	  
+    <div id="canvas-area" class="row mb-5">  	  
       <canvas id="myCanvas" height="660" width="1200"></canvas>
     </div>
     
     <!-- Control area -->
     <div id="control-area" class="row">
       <!-- Columnn-0 -->
-      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"></div>
+      <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"></div>
       <!-- Columnn-1 -->
-      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
         <div class="control-col">
           <form class="">       
             <div class="form-group row" hidden>          
@@ -47,8 +47,9 @@
             <div class="form-group row">
               <label class="col-sm-12 col-form-label" for="input-file">
                 <button type="button" class="" id="back-btn-1" onclick="back();">BACK</button>   
-                <button type="button" class="" id="next-btn-1" onclick="next();">NEXT</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button type="button" class="" id="save-location" onclick="record_db();">SAVE THIS LOCATION</button>             
+                <button type="button" class="" id="next-btn-1" onclick="next();">NEXT</button> &nbsp;&nbsp;&nbsp;
+                <button type="button" class="" id="save-location" onclick="record_db();">SAVE THIS LOCATION</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="" id="save-location" onclick="get_res();">TRAIN AND RUN</button>             
               </label>
             </div>
             <div class="form-group row" hidden>
@@ -199,6 +200,16 @@
       </div>
       <canvas id="air-space"></canvas>
     </div> 
+
+    <!-- PYTHON SERVER RESONPONSE WILL SHOW BELOW -->
+
+    <div class="python-res">
+      <div id="res-title" class="pt-5"></div>
+      <div id="pre-train-title" class="pt-3 pb-3"></div>
+      <div class="row" id="res-pre-train"></div>
+      <div id="new-train-title" class="pt-3 pb-3"></div>
+      <div class="row" id="res-new-train"></div>
+    </div>
   
   </div> <!-- end of biggest div after body tag -->
 
@@ -223,6 +234,7 @@
   <script type="text/javascript" src="js/2.5d/demo.js"></script>
   <script type="text/javascript" src="js/2.5d/airspace.js"></script>
   <script type="text/javascript" src="js/2.5d/communication.js"></script>
+  <script type="text/javascript" src="js/2.5d/15Aug.js"></script>
 </body>
 
 </html>
