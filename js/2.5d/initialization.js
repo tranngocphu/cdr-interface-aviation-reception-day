@@ -21,6 +21,12 @@ let showResolutionHistory;
 let showPotentialLos;
 let showConflictIndicator;
 
+let demo_id;
+let all_simple_res = {
+    "demo_id" : demo_id,
+    "data" : []
+}
+
 // Read setting
 function ReadSetting() {
     showGoodCpa = setting.show_good_cpa;

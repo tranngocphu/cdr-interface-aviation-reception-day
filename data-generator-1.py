@@ -204,7 +204,7 @@ def GenerateConflictMap(all_flight, sector_radius, grid_size, safe_dist) :
 html_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/'
 output_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/visitors/'
 
-N = 20 # number of scenarios
+N = 6 # number of scenarios
 n = 5 # number of flights in a scenario
 
 scenario_df = pd.DataFrame()
@@ -241,24 +241,24 @@ for i in range(0, N): # scenarios loop
 
 write_to_file = True
 
-filename = 'demo1_' + str(n) + '_' + str(N)
+filename = 'unseen_6'
 
 if write_to_file :
 
     # write scenario df
-    scenario_df.to_csv( output_path + filename + '_scenarios.csv', index=False)
-    scenario_df.to_json( output_path + filename + '_scenarios.json', orient='records')
+    scenario_df.to_csv( output_path + filename + '.csv', index=False)
+    scenario_df.to_json( output_path + filename + '.json', orient='records')
 
     # write conflict map df
     all_conflict_map_df.to_csv( output_path + filename + '_conflict_map.csv', index=False)
 
     # create demo.js from json string
-    jsonf = open(output_path + filename + '_scenarios.json', 'r')
+    jsonf = open(output_path + filename + '.json', 'r')
     json_content = jsonf.readline()
     jsonf.close()
 
-    jsf = open(html_path + 'js/2.5d/demo.js', 'w+')
-    jsf.write('let demoData = ' + json_content + ';')
+    jsf = open(output_path + filename + '.js', 'w+')
+    jsf.write('let demo_data_1 = ' + json_content + ';')
     jsf.close()
 
     seedf = open(output_path + filename + '_SEED.txt', 'w+')

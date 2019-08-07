@@ -416,6 +416,12 @@ function DectectAndShowLateralLOS(mode) {
             hue = 330 - (los_box[i+1].segments[2].point.y - cpaThreshold * 1.333) / (box_height - cpaThreshold * 1.333) * (255 - 360) * color_jupm;
         }
         los_box[i+1].fillColor.hue = hue;
+        var os_dev_ratio =  Math.round(ownshipLateralResTop.length /  ownshipTop.length * 1000) / 1000;
+        console.log(os_dev_ratio) 
+        os_dev.segments[2].point.x = box_origin.x + 100 * os_dev_ratio;
+        os_dev.segments[3].point.x = box_origin.x + 100 * os_dev_ratio;
+        os_dev_text.point.x = box_origin.x + 100 * os_dev_ratio + 30;
+        os_dev_text.content = os_dev_ratio.toString();
 
     }
     // check against intruder
@@ -973,3 +979,69 @@ function show_confict_indicator(visible) {
     }
     visual_indicator_cover.visible = !visible;
 }
+
+
+/* 
+ * NEXT and BACK button (added on 31 Jul)
+ */
+
+$("#current-scen").prop("disabled", true);
+
+function next() {
+    console.log("Next btn hit.");
+    if ( !allScen ) {        
+        return;    
+    } else {
+        if ( $("#current-scen").val() < allScen.length ) {
+            $("#current-scen").val( Number($("#current-scen").val()) + 1 );
+            if ( $("#current-scen").val() > 10 ) {
+                showConflictIndicator = false;
+                visual_indicator_cover.visible = true;
+            } 
+            $("#current-scen").trigger("change");   
+        }
+    }
+}
+
+function back() {
+    console.log("Back btn hit.");
+    if ( !allScen ) {       
+        return;   
+    } else {
+        if ( $("#current-scen").val() > 1 ) {
+            $("#current-scen").val( Number($("#current-scen").val()) - 1 );
+                if ( $("#current-scen").val() <= 10 ) {
+                    showConflictIndicator = true;
+                    visual_indicator_cover.visible = false;
+                } 
+            $("#current-scen").trigger("change");   
+        }
+    }
+}
+
+
+function record_db() {
+
+    var data = "id=" +  $("#current-scen").val(); 
+    data += "&x=" + Math.round(ownshipLateralResTop.segments[1].point.x).toString();
+    data += "&y=" + Math.round(ownshipLateralResTop.segments[1].point.y).toString();
+    
+    $.get("php-handler/save-location.php?" + data)
+    .done(function(data) {
+        
+        console.log(data);
+
+        $("#next-btn-1").trigger("click");
+    
+    });
+}
+
+// function to save all 20 resolutions provided by visitor
+// y-position is being flipped in this function
+function save_current_res () {
+    let x = Math.round(ownshipLateralResTop.segments[1].point.x);
+    let y = Math.round(660 - ownshipLateralResTop.segments[1].point.y);
+    all_simple_res.data.push([x, y]);
+}
+
+

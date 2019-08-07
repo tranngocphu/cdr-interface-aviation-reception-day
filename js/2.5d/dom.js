@@ -41,9 +41,16 @@ $('#input-file').change(function ButtonInputFile() {
     reader.readAsText(file);
 })
 
-$('#demo-data').click(function LoadDemoData (){
+function LoadDemoData (id){
     allResolution = [];
-    allScen = demoData;    
+    switch (id) {
+        case 1:
+            allScen = demo_data_1;
+        case 2:
+            allScen = demo_data_2;
+        case 3:
+            allScen = demo_data_3;
+    } 
     currentScenarioId = 0;    
     allScen.map(function(element) { return ParseScenarioData(element) } );        
     $('#all-scen').html(allScen.length);
@@ -55,7 +62,9 @@ $('#demo-data').click(function LoadDemoData (){
     $('#prev-btn').prop('disabled', false);
     Reset();  
     demoMode = true; 
-})
+    $('#demo-id').html(id.toString());
+    all_simple_res.demo_id = id;
+}
 
 // Next button
 $('#next-btn').click(function ButtonNext() {        
@@ -260,57 +269,4 @@ $('#show-3d-view').change(function ShowTopView(){
 })
 
 
-/* 
- * NEXT and BACK button (added on 31 Jul)
- */
 
-$("#current-scen").prop("disabled", true);
-
- function next() {
-    console.log("Next btn hit.");
-    if ( !allScen ) {        
-        return;    
-    } else {
-        if ( $("#current-scen").val() < allScen.length ) {
-            $("#current-scen").val( Number($("#current-scen").val()) + 1 );
-            if ( $("#current-scen").val() > 10 ) {
-                showConflictIndicator = false;
-                visual_indicator_cover.visible = true;
-            } 
-            $("#current-scen").trigger("change");   
-        }
-    }
- }
-
- function back() {
-    console.log("Back btn hit.");
-    if ( !allScen ) {       
-        return;   
-    } else {
-        if ( $("#current-scen").val() > 1 ) {
-            $("#current-scen").val( Number($("#current-scen").val()) - 1 );
-                if ( $("#current-scen").val() <= 10 ) {
-                    showConflictIndicator = true;
-                    visual_indicator_cover.visible = false;
-                } 
-            $("#current-scen").trigger("change");   
-        }
-    }
-}
-
-
-function record_db() {
-
-    var data = "id=" +  $("#current-scen").val(); 
-    data += "&x=" + Math.round(ownshipLateralResTop.segments[1].point.x).toString();
-    data += "&y=" + Math.round(ownshipLateralResTop.segments[1].point.y).toString();
-    
-    $.get("php-handler/save-location.php?" + data)
-    .done(function(data) {
-        
-        console.log(data);
-
-        $("#next-btn-1").trigger("click");
-    
-    });
-}

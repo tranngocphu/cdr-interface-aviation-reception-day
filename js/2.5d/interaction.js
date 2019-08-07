@@ -37,13 +37,7 @@ inputTool.onMouseDrag = function GlobalMouseDrag (event) {
         hasLateralRes = true;
         $('#prefer-lateral').prop('disabled', false);
         DectectAndShowLateralLOS();
-        // SaveResolution(currentScenarioId);    
-        var os_dev_ratio =  Math.round(ownshipLateralResTop.length /  ownshipTop.length * 1000) / 1000;
-        console.log(os_dev_ratio) 
-        os_dev.segments[2].point.x = box_origin.x + 100 * os_dev_ratio;
-        os_dev.segments[3].point.x = box_origin.x + 100 * os_dev_ratio;
-        os_dev_text.point.x = box_origin.x + 100 * os_dev_ratio + 30;
-        os_dev_text.content = os_dev_ratio.toString();
+        // SaveResolution(currentScenarioId);   
     }
 }
 
@@ -56,6 +50,7 @@ inputTool.onMouseUp = function GlobalMouseUp (event) {
         if (!showConflictIndicator) {
             show_confict_indicator(true);
         }
+        save_current_res();
         AutoPlayResolution();
     }
     console.log("mouse button released:" , event.point.x, event.point.y);

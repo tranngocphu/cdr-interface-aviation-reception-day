@@ -294,3 +294,20 @@ def score(F_Res, Y):
         list_score.append(np.linalg.norm(np.array(F_Res[i])-Y))
         
     return np.array(list_score)
+
+
+
+def feasible_res_from_map (df_map) :
+    all_map = []
+    for step in range(len(df_map)//200):
+        F_Res = []
+        
+        c = 0
+        for i in range(200):
+            for j in range(step*200, (step+1)*200):
+                c += df_map[str(i)][j]
+                if int(df_map[str(i)][j]) == 0:
+                    F_Res.append([(j-step*200)*3.3,i*3.3])
+        # print(step)
+        all_map.append(F_Res)
+    return all_map

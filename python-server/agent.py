@@ -1,5 +1,3 @@
-# Import modules for CGI handling 
-import cgi
 import tensorflow as tf
 import numpy as np
 import gym
@@ -17,9 +15,7 @@ from matplotlib import path
 import itertools
 import scipy.misc
 import pickle
-import os
 import json
-import shutil
 
 import copy
 from sklearn.ensemble import RandomForestRegressor
@@ -30,63 +26,115 @@ from config import python_path
 from config import img_path
 
 
-#
-#
-# 
-df = pd.read_csv(python_path + '100_5.csv')
+# useful vars
+
+max_num = 5 # number of flight
+
+# ===============
+# PRE TRAIN MODEL
+# ===============
+
+# prepare for training of pre-trained model
+
+df = pd.read_csv(python_path + 'data/pre_train_data.csv')
 df_train = pd.DataFrame()
 df_test = pd.DataFrame()
 df_ = df.sample(frac=0.8,random_state=200)
 df_train = df_train.append(df_)
 df_test = df_test.append(df.drop(df_.index))
 
-#
-#
-# 
-max_num = 5
-model = train_agent(df_train, 330, max_num)
+max_num = 5  # number of flight
+pre_model = train_agent(df_train, 330, max_num)
 
-# with open(python_path + "model", "wb") as f :
-#     pickle.dump(model, f)
+## save pre model to a pickle
+# with open(python_path + "pre_model", "wb") as f :
+#     pickle.dump(pre_model, f)
 
-with open(python_path + "model", 'rb') as f :
-    model = pickle.load(f)
+# load pre model from pickle
+with open(python_path + "data/pre_train_model", 'rb') as f :
+    pre_model = pickle.load(f)
 
+
+# # get feasible res from the conflict map...
 # df_map = pd.read_csv(python_path + 'map.csv',delimiter=',', header=0)
+# all_map = feasible_res_from_map (df_map)
 
-# All_Map = []
-# for step in range(len(df_map)//200):
-#     F_Res = []
-    
-#     c = 0
-#     for i in range(200):
-#         for j in range(step*200, (step+1)*200):
-#             c += df_map[str(i)][j]
-#             if int(df_map[str(i)][j]) == 0:
-#                 F_Res.append([(j-step*200)*3.3,i*3.3])
-#     print(step)
-#     All_Map.append(F_Res)
-
-# with open(python_path + "all_map", "wb") as f :
-#     pickle.dump(All_Map, f)
-
-with open(python_path + "all_map", 'rb') as f :
-    All_Map = pickle.load(f)
+# ... or load all_map from pickle
+# with open(python_path + "data/pre_train_all_map", 'rb') as f :
+#     pre_all_map = pickle.load(f)
 
 
-#
-#
+# ===============
+# NEW TRAIN MODEL
+# ===============
+
+# load data received from the client after visitor finished 20 scenarios
+# the pickle was created in handler.py 
+with open(python_path + "data/client_data", 'rb') as f :
+    client_data = pickle.load(f)
+
+# load 20 conflict scenarios
+demo_id = client_data['demo_id']
+conflict_file = 'demo' + str(demo_id) + '.csv'
+map_file = 'demo' + str(demo_id) + '_conflict_map.csv'
+df_20_conflict = pd.read_csv(python_path + 'data/'+ conflict_file)
+
+# load 20 resolution: res_data = [ [x, y], [x, y ], ... ]
+res_data = client_data['data']
+
+# combine them
+for i in range(0, len(df_20_conflict)) :
+    df_20_conflict.at[i, "res_x"] = res_data[i][0]
+    df_20_conflict.at[i, "res_y"] = res_data[i][1]
+
+# prepare training data
+df_new_train = pd.DataFrame()
+df_ = df.sample(frac=1,random_state=200)
+df_new_train = df_new_train.append(df_)
+
+# train the new model
+new_model = train_agent(df_new_train, 330, max_num)
+
+# # new feasible map
+# df_new_map = pd.read_csv(python_path + 'data/' + map_file, delimiter=',', header=0)
+# new_all_map = feasible_res_from_map(df_new_map)
+
+
+# ===============
+# TEST TWO MODELS
+# ===============
+
 # prepare html template:
-img_element = """<div class="col-md-4 col-lg-3 col-xl-2 pt-2 pb-2"><img class="img-fluid res-img" src="data/img/<img_file>"></img></div>"""
+img_element = """<div class="col-md-4 col-lg-3 col-xl-2 pt-2 pb-2"><img class="img-fluid res-img" src="data/img/<img_file>"></img><br><button type="button" class="btn btn-sm" onclick="run_res(@id, @x, @y);">Run</button></div>"""
 pre_train_data = ''
 new_train_data = ''
 
-# test process
-df_test_ = df_test
-for i in range(len(df_test_)):    
 
-    Y = predict_agent(model, df_test_.iloc[i], 330, max_num)
-    F_Res = np.array(All_Map[df_test_.index[i]])
+# Test on 6 unseen scenarios. 
+# Test df preparation:
+df_test_ = pd.read_csv(python_path + 'data/unseen_6.csv')
+df_test_['res_x'] = 0
+df_test_['res_y'] = 0
+
+# prepare heat map of test scenarios
+# df_test_map = pd.read_csv(python_path + 'data/unseen_6_conflict_map.csv', delimiter=',', header=0)
+# test_map = feasible_res_from_map(df_test_map)
+
+# ## save test heat map to a pickle
+# with open(python_path + 'data/unseen_map_pickle', "wb") as f :
+#     pickle.dump(test_map, f)
+
+# ... or load test heat map from pickle
+with open(python_path + 'data/unseen_map_pickle', 'rb') as f :
+    test_map = pickle.load(f)
+
+# Test the pre-trained model
+for i in range(len(df_test_)) :
+    
+    img_file = 'pre_%d_.png' % i
+
+    Y = predict_agent(pre_model, df_test_.iloc[i], 330, max_num)
+    F_Res = np.array(test_map[df_test_.index[i]])
     l_score = score(F_Res, Y) 
     Pred_P = F_Res[np.argmin(l_score)]
 
@@ -102,25 +150,57 @@ for i in range(len(df_test_)):
     ax.scatter(660, 660, c='white', s=0)
     plt.axis([0, 660, 0, 660])
     ax.set_aspect('equal')
-    fig.savefig(img_path + "%d.png" % i, dpi=72, bbox_inches='tight', pad_inches=0)
+    fig.savefig(img_path + img_file, dpi=48, bbox_inches='tight', pad_inches=0)
+        
+    this_img = img_element.replace( "<img_file>", img_file )
+    this_img = this_img.replace("@id", str(i))
+    this_img = this_img.replace("@x", str(Pred_P[0]))
+    this_img = this_img.replace("@y", str(Pred_P[1]))
+    pre_train_data += this_img
+
+
+# Test the new-trained model
+
+for i in range(len(df_test_)) :
     
-    this_img = img_element.replace( "<img_file>", "%d.png" % i )
+    img_file = 'new_%d_.png' % i
 
-    if i < 6 :
-        pre_train_data += this_img
-    else :
-        new_train_data += this_img
+    Y = predict_agent(new_model, df_test_.iloc[i], 330, max_num)
+    F_Res = np.array(test_map[df_test_.index[i]])
+    l_score = score(F_Res, Y) 
+    Pred_P = F_Res[np.argmin(l_score)]
 
-    if i == 11 :
-        break
+    fig, ax = plt.subplots()
+
+    ax.scatter(F_Res[:,0],F_Res[:,1],c=l_score)
+    ax.scatter(Y[0][0],Y[0][1], c='r')
+    ax.scatter( df_test_.iloc[i].res_x,df_test_.iloc[i].res_y, c='b')
+    ax.scatter(Pred_P[0],Pred_P[1], c='g')
+    ax.plot([df_test_.iloc[i].entry_x_1, df_test_.iloc[i].exit_x_1],[df_test_.iloc[i].entry_y_1, df_test_.iloc[i].exit_y_1], c= 'b')
+    ax.plot([df_test_.iloc[i].entry_x_0, df_test_.iloc[i].exit_x_0],[df_test_.iloc[i].entry_y_0, df_test_.iloc[i].exit_y_0], c= 'r')
+
+    ax.scatter(660, 660, c='white', s=0)
+    plt.axis([0, 660, 0, 660])
+    ax.set_aspect('equal')
+    fig.savefig(img_path + img_file, dpi=48, bbox_inches='tight', pad_inches=0)
+        
+    this_img = img_element.replace( "<img_file>", img_file )
+    this_img = this_img.replace("@id", str(i))
+    this_img = this_img.replace("@x", str(Pred_P[0]))
+    this_img = this_img.replace("@y", str(Pred_P[1]))
+    new_train_data += this_img
+
+
+# Prepare response to the frontend
 
 response = {
-    "stt" : True,
-    "pre_data": pre_train_data,
-    "new_data": new_train_data
+    'stt' : 1,
+    'pre_data' : pre_train_data,
+    'new_data' : new_train_data
 }
 
 response = json.dumps(response)
 
-print ('Content-type: application/json\n\n')
+print ("Content-Type: application/json\n\n")
+
 print (response)
