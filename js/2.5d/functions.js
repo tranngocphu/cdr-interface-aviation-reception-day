@@ -248,6 +248,13 @@ function Reset() {
     intruderLos.children[1].position = hidden;
     intruderLos.children[2].position = hidden;
     currentResolution = { scenario_id: null, lateral: null, vertical: null, final_res: null };
+
+    os_dev.segments[2].point.x = box_origin.x + 100;
+    os_dev.segments[3].point.x = box_origin.x + 100;
+    os_dev_text.content = '1';
+    os_dev_text.point.x = os_dev.segments[2].point.x + 30;
+    os_dev_text.point.y = (os_dev.segments[0].point.y + os_dev.segments[1].point.y) / 2 + 5;
+
 }
 
 

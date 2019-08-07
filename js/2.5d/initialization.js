@@ -819,6 +819,12 @@ text5.fillColor = 'black';
 text5.content = 'SEPARATION INDICATORS';
 text5.scaling = title_scale;
 
+var text6 = new PointText(box_origin.add(box_width/2, 420));
+text6.justification = 'center';
+text6.fillColor = 'black';
+text6.content = 'MANEUVER DEVIATION';
+text6.scaling = title_scale;
+
 let cpa_line = new Path.Line({
     segments: [[box_origin.x, five_mn_level], [box_origin.x + box_width, five_mn_level]],
     strokeColor: black,
@@ -826,9 +832,7 @@ let cpa_line = new Path.Line({
     visible: true, 
 })
 
-
 let los_box = [];
-
 
 for ( i=0; i<4; i++) {
     los_box[i] = new Path.Rectangle({
@@ -841,6 +845,24 @@ for ( i=0; i<4; i++) {
     })
 }
 
+os_dev = new Path.Rectangle({
+    point: box_origin.add(0, 450),
+    size: [100, 50],
+    fillColor: { hue: 200, saturation: 1, lightness: 0.5 },
+    strokeColor: '',
+    strokeWidth: 0,
+    visible: true,
+})
+
+os_dev_text = new PointText(
+    os_dev.segments[2].point.x + 30,
+    (os_dev.segments[0].point.y + os_dev.segments[1].point.y) / 2 + 5,
+);
+os_dev_text.justification = 'center';
+os_dev_text.fillColor = 'black';
+os_dev_text.content = '1';
+os_dev_text.scaling = label_scale;
+
 cpa_line.bringToFront();
 
 var visual_indicator_cover = new Path.Rectangle({
@@ -851,3 +873,5 @@ var visual_indicator_cover = new Path.Rectangle({
     strokeWidth: 0,
     visible: false
 })
+
+
