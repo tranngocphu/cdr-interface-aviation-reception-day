@@ -1,8 +1,5 @@
-#! /Users/Phu/anaconda3/bin/python
-
 # Import modules for CGI handling 
 import cgi
-
 import tensorflow as tf
 import numpy as np
 import gym
@@ -29,9 +26,9 @@ from sklearn.ensemble import RandomForestRegressor
 
 from lib import *
 
+from config import python_path
+from config import img_path
 
-python_path = '/Volumes/Data/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/python-server/'
-img_path = '/Volumes/Data/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/img/'
 
 #
 #

@@ -6,7 +6,7 @@ function get_res () {
     $('#new-train-title').html("");
     $('#res-new-train').html("");
     $('html, body').animate({ scrollTop: $("#primary-container").offset().top }, 0);
-    $.get("python-server/agent.py")
+    $.get("python-server/handler.py")
     .done( function(data) {
         if ( data.stt ) {
             $('#train-progress').hide();

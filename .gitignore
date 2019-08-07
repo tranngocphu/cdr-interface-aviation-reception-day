@@ -3,3 +3,6 @@ cdr-interface.code-workspace
 demo_data_interface.json
 .DS_Store
 php-handler/config.php
+error_log
+access_log
+python-server/config.py
