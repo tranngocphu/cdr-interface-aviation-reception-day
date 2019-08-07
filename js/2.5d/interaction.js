@@ -53,11 +53,13 @@ inputTool.onMouseUp = function GlobalMouseUp (event) {
     lockLineWidth = false;
     if ( performingLateralSeparation ) {
         performingLateralSeparation = false;  
+        if (!showConflictIndicator) {
+            show_confict_indicator(true);
+        }
         AutoPlayResolution();
     }
     console.log("mouse button released:" , event.point.x, event.point.y);
     console.log(ownshipLateralResTop.segments[1].point.x, "" , ownshipLateralResTop.segments[1].point.y);
-
 }
 
 

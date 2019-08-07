@@ -374,14 +374,15 @@ function DectectAndShowLateralLOS(mode) {
     }    
     for (let i=0; i<surroundingFlight; i++) {
         let los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, srdFlightTop[i], srdPointLevel[i], commonSpeed);        
-        if (los[0] && showConflictIndicator) {                                    
+        if (los[0]) { // lateral loss detected                                    
             if (!srdLevelSafe[i]) { // intruder level in danger zone, show actual los marker   
-                surroundingLos[i].children[0].segments = [los[3], los[4]];             
-                surroundingLos[i].children[0].strokeColor = red;
-                surroundingLos[i].children[0].dashArray = null;
-                surroundingLos[i].children[0].visible = true;
-                surroundingLos[i].children[1].position = los[3].add(los[4]).divide(2);
-                surroundingLos[i].children[2].position = srdFlightSide[i].getPointAt(commonSpeed * los[2]);
+                // surroundingLos[i].children[0].segments = [los[3], los[4]];             
+                // surroundingLos[i].children[0].strokeColor = red;
+                // surroundingLos[i].children[0].dashArray = null;
+                // surroundingLos[i].children[0].visible = true;
+                // surroundingLos[i].children[1].position = los[3].add(los[4]).divide(2);
+                // surroundingLos[i].children[2].position = srdFlightSide[i].getPointAt(commonSpeed * los[2]);
+                update_srd_los_marker(i, showConflictIndicator, los);
             } else { // intruder level in safe zone, hide actual los marker:  
                 surroundingLos[i].children[0].segments = hidden; // hide in top view
                 surroundingLos[i].children[2].position = hidden; // hide in side view
@@ -926,8 +927,28 @@ function set_color() {
     }    
 }
 
-function set_initial_height_sep_box () {
 
+function update_srd_los_marker(i, visible, los) {
+    surroundingLos[i].children[0].segments = [los[3], los[4]];             
+    surroundingLos[i].children[0].strokeColor = red;
+    surroundingLos[i].children[0].dashArray = null;
+    surroundingLos[i].children[0].visible = visible;
+    surroundingLos[i].children[1].position = los[3].add(los[4]).divide(2);
+    surroundingLos[i].children[1].visible = visible;
+    surroundingLos[i].children[2].position = srdFlightSide[i].getPointAt(commonSpeed * los[2]);  
+    surroundingLos[i].children[2].visible = visible; 
+    visual_indicator_cover.visible = !visible;
+}
 
-
+function show_confict_indicator(visible) {
+    for (let i=0; i<surroundingFlight; i++ ) {
+        if ( surroundingLos[i].children[0].length < cpaThreshold ) {
+            surroundingLos[i].children[0].visible = visible;  
+            surroundingLos[i].children[1].visible = visible;  
+        } else {
+            surroundingLos[i].children[0].visible = false; 
+            surroundingLos[i].children[1].visible = false;       
+        }
+    }
+    visual_indicator_cover.visible = !visible;
 }

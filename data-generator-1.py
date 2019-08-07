@@ -202,10 +202,10 @@ def GenerateConflictMap(all_flight, sector_radius, grid_size, safe_dist) :
 
 # Generate data frame
 html_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/'
-output_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/'
+output_path = '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/visitors/'
 
-N = 100 # number of scenarios
-n = 9 # number of flights in a scenario
+N = 20 # number of scenarios
+n = 5 # number of flights in a scenario
 
 scenario_df = pd.DataFrame()
 
@@ -241,7 +241,7 @@ for i in range(0, N): # scenarios loop
 
 write_to_file = True
 
-filename = '15Aug19_demo_data_' + str(n) + '_flights_' + str(N)
+filename = 'demo1_' + str(n) + '_' + str(N)
 
 if write_to_file :
 

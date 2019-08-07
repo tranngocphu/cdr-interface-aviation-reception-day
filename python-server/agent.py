@@ -46,7 +46,13 @@ df_test = df_test.append(df.drop(df_.index))
 max_num = 5
 model = train_agent(df_train, 330, max_num)
 
-df_map = pd.read_csv(python_path + 'map.csv',delimiter=',', header=0)
+# with open(python_path + "model", "wb") as f :
+#     pickle.dump(model, f)
+
+with open(python_path + "model", 'rb') as f :
+    model = pickle.load(f)
+
+# df_map = pd.read_csv(python_path + 'map.csv',delimiter=',', header=0)
 
 # All_Map = []
 # for step in range(len(df_map)//200):
@@ -75,15 +81,9 @@ img_element = """<div class="col-md-4 col-lg-3 col-xl-2 pt-2 pb-2"><img class="i
 pre_train_data = ''
 new_train_data = ''
 
-if os.path.exists("img"):
-    shutil.rmtree("img")
-os.makedirs("img")
-
 # test process
 df_test_ = df_test
-for i in range(len(df_test_)):
-
-    
+for i in range(len(df_test_)):    
 
     Y = predict_agent(model, df_test_.iloc[i], 330, max_num)
     F_Res = np.array(All_Map[df_test_.index[i]])
@@ -100,14 +100,9 @@ for i in range(len(df_test_)):
     ax.plot([df_test_.iloc[i].entry_x_0, df_test_.iloc[i].exit_x_0],[df_test_.iloc[i].entry_y_0, df_test_.iloc[i].exit_y_0], c= 'r')
 
     ax.scatter(660, 660, c='white', s=0)
-    # plt.title(df_test_.index[i])
     plt.axis([0, 660, 0, 660])
     ax.set_aspect('equal')
-    # ax.set_axis_off()
-    # ax.xaxis.set_major_locator(mt.NullLocator())
-    # ax.yaxis.set_major_locator(mt.NullLocator())
-    fig.savefig(img_path + "%d.png" % i, dpi=72, bbox_inches='tight', pad_inches=0, transparent=True)
-
+    fig.savefig(img_path + "%d.png" % i, dpi=72, bbox_inches='tight', pad_inches=0)
     
     this_img = img_element.replace( "<img_file>", "%d.png" % i )
 
