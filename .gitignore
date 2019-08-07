@@ -8,3 +8,8 @@ access_log
 python-server/config.py
 data/img
 python-server/img
+python-server/__pycache__/config.cpython-37.pyc
+access_log
+error_log
+error_log
+access_log
