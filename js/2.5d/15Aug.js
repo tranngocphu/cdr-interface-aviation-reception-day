@@ -1,4 +1,5 @@
 function get_res () {
+    $('#train-progress').show();
     $('#res-title').html("");
     $('#pre-train-title').html("");
     $('#res-pre-train').html("");
@@ -8,7 +9,8 @@ function get_res () {
     $.get("python-server/agent.py")
     .done( function(data) {
         if ( data.stt ) {
-            $('#res-title').html("MODEL PERFORMANCE ON 6 UNSEEN SCENARIOS (PLACEHOLDER FOR NOW)");  
+            $('#train-progress').hide();
+            $('#res-title').html("MODEL PERFORMANCE ON 6 UNSEEN SCENARIOS");  
             $('#pre-train-title').html("PRE-TRAINED MODEL PERFORMANCE");
             $('#res-pre-train').html(data.pre_data);
             $('#new-train-title').html("YOUR MODEL PERFORMANCE");
@@ -21,3 +23,5 @@ function get_res () {
 }
 
 $('html, body').animate({ scrollTop: $("#primary-container").offset().top }, 0);
+
+$('#train-progress').hide();

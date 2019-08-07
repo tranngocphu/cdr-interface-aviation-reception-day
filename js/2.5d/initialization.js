@@ -867,7 +867,7 @@ cpa_line.bringToFront();
 
 var visual_indicator_cover = new Path.Rectangle({
     point: box_origin.add(-50, -40),
-    size: [box_width+100, box_height+250],
+    size: [box_width + 100, box_height + 350],
     fillColor: 'white',
     strokeColor: '',
     strokeWidth: 0,
