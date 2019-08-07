@@ -419,15 +419,16 @@ function DectectAndShowLateralLOS(mode) {
 
     }
     // check against intruder
-    los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, intruderTop, intruderPointLevel, commonSpeed);
-    intruderLos.children[0].segments = [los[3], los[4]];
-    if (los[0] && showConflictIndicator ) {
-        intruderLos.children[0].strokeColor = red;
-        intruderLos.children[0].dashArray = null;
-        intruderLos.children[0].visible = true;
-        intruderLos.children[1].position = los[3].add(los[4]).divide(2);
-        intruderLos.children[2].position = intruderSide.getPointAt(commonSpeed * los[2]);
+    los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, intruderTop, intruderPointLevel, commonSpeed);    
+    if (los[0]) {
+        // intruderLos.children[0].strokeColor = red;
+        // intruderLos.children[0].dashArray = null;
+        // intruderLos.children[0].visible = true;
+        // intruderLos.children[1].position = los[3].add(los[4]).divide(2);
+        // intruderLos.children[2].position = intruderSide.getPointAt(commonSpeed * los[2]);
+        update_intruder_los_marker(showConflictIndicator, los);
     } else {
+        intruderLos.children[0].segments = [los[3], los[4]];
         intruderLos.children[0].strokeColor = black;
         intruderLos.children[0].dashArray = lineWidth.dashArray;
         intruderLos.children[0].visible = showGoodCpa;
@@ -940,6 +941,18 @@ function update_srd_los_marker(i, visible, los) {
     visual_indicator_cover.visible = !visible;
 }
 
+function update_intruder_los_marker(visible, los) {
+    intruderLos.children[0].segments = [los[3], los[4]];
+    intruderLos.children[0].strokeColor = red;
+    intruderLos.children[0].dashArray = null;
+    intruderLos.children[0].visible = visible;
+    intruderLos.children[1].position = los[3].add(los[4]).divide(2);
+    intruderLos.children[1].visible = visible;
+    intruderLos.children[2].position = intruderSide.getPointAt(commonSpeed * los[2]);  
+    intruderLos.children[2].visible = visible; 
+    visual_indicator_cover.visible = !visible;
+}
+
 function show_confict_indicator(visible) {
     for (let i=0; i<surroundingFlight; i++ ) {
         if ( surroundingLos[i].children[0].length < cpaThreshold ) {
@@ -949,6 +962,14 @@ function show_confict_indicator(visible) {
             surroundingLos[i].children[0].visible = false; 
             surroundingLos[i].children[1].visible = false;       
         }
+    }
+
+    if ( intruderLos.children[0].length < cpaThreshold ) {
+        intruderLos.children[0].visible = visible;
+        intruderLos.children[1].visible = visible;    
+    } else {
+        intruderLos.children[0].visible = false;
+        intruderLos.children[1].visible = false; 
     }
     visual_indicator_cover.visible = !visible;
 }

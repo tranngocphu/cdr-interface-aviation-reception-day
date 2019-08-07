@@ -121,8 +121,9 @@ ownshipTop.onMouseLeave = function ownshipTopMouseLeave (event) {
 ownshipTop.onMouseDown = function ownshipTopMouseDown (event) {
     if (lateralSeparation) {
         performingLateralSeparation = true;
-        ownshipLateralResTop.visible = true;    
+        ownshipLateralResTop.visible = true;
     }
+    show_confict_indicator(showConflictIndicator);
 }
 
 ownshipLateralResTop.onMouseDown = function ownshipLateralResMouseDown (event) {
