@@ -71,7 +71,7 @@ with open(python_path + "all_map", 'rb') as f :
 #
 #
 # prepare html template:
-img_element = """<div class="col-md-4 col-lg-3 col-xl-2 pt-2 pb-2"><img class="img-fluid res-img" src="python-server/img/<img_file>"></img></div>"""
+img_element = """<div class="col-md-4 col-lg-3 col-xl-2 pt-2 pb-2"><img class="img-fluid res-img" src="data/img/<img_file>"></img></div>"""
 pre_train_data = ''
 new_train_data = ''
 
