@@ -6,3 +6,5 @@ php-handler/config.php
 error_log
 access_log
 python-server/config.py
+data/img
+python-server/img

@@ -10189,3 +10189,16 @@
 127.0.0.1 - - [07/Aug/2019:20:50:24 +0800] "GET /css/bootstrap.min.css.map HTTP/1.1" 200 625953
 127.0.0.1 - - [07/Aug/2019:20:50:24 +0800] "GET /js/bootstrap.min.js.map HTTP/1.1" 200 190253
 127.0.0.1 - - [07/Aug/2019:20:50:24 +0800] "GET /js/math.min.map HTTP/1.1" 404 213
+127.0.0.1 - - [07/Aug/2019:20:50:28 +0800] "GET /python-server/handler.py HTTP/1.1" 200 1597
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/0.png HTTP/1.1" 200 27152
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/1.png HTTP/1.1" 200 49522
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/2.png HTTP/1.1" 200 45778
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/3.png HTTP/1.1" 200 42984
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/4.png HTTP/1.1" 200 36148
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/5.png HTTP/1.1" 200 48964
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/6.png HTTP/1.1" 200 9257
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/7.png HTTP/1.1" 200 48721
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/8.png HTTP/1.1" 200 53695
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/9.png HTTP/1.1" 200 47201
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/10.png HTTP/1.1" 200 59504
+127.0.0.1 - - [07/Aug/2019:20:50:53 +0800] "GET /python-server/img/11.png HTTP/1.1" 200 44354

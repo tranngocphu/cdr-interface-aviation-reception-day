@@ -106,7 +106,7 @@ for i in range(len(df_test_)):
     # ax.set_axis_off()
     # ax.xaxis.set_major_locator(mt.NullLocator())
     # ax.yaxis.set_major_locator(mt.NullLocator())
-    fig.savefig("img/%d.png" % i, dpi=72, bbox_inches='tight', pad_inches=0, transparent=True)
+    fig.savefig(img_path + "%d.png" % i, dpi=72, bbox_inches='tight', pad_inches=0, transparent=True)
 
     
     this_img = img_element.replace( "<img_file>", "%d.png" % i )
