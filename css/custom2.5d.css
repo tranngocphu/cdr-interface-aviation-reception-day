@@ -68,13 +68,14 @@ hr {
     display: block;
     text-align: center;
     font-size: 22pt;
+    color: #6e6e6e;
 }
 
 #new-train-title {
     display: block;
     text-align: center;
     font-size: 18pt;
-    color: green;
+    color: #f08400;
     margin: 10px 0px;
 }
 
