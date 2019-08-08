@@ -685,9 +685,17 @@ let lateralTopLeftCover = new Path.Rectangle({
     strokeColor: '',
     strokeWidth: 0,
     visible: true
-})
+});
 
-
+lateralTopLeftCover.onDoubleClick = function (event) {
+    console.log('double click');
+    var x = event.point.x;
+    var y = event.point.y;
+    if ( x < 50 && y < 50 ) {
+        all_simple_res = sample_res;
+        console.log('dummy res loaded');
+    }
+}
 
 
 

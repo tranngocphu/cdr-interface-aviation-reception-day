@@ -10,220 +10,70 @@
 </head>
 
 <body>
-  <div id="primary-container" class="container-fluid">
-    <!-- 2D views -->
-    <div id="2D"></div>  
-    <div id="canvas-area" class="row mb-5">  	  
-      <canvas id="myCanvas" height="660" width="1200"></canvas>
-    </div>
-    
-    <!-- Control area -->
-    <div id="control-area" class="row">
-      <!-- Columnn-0 -->
-      <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"></div>
-      <!-- Columnn-1 -->
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-        <div class="control-col">
-          <form class="">       
-            <div class="form-group row" hidden>          
-              <label class="col-sm-4 col-form-label"><a href="setting" target="_blank" id="see-setting">View Setting</a></label>
-              <div class="col-sm-8">
-                  <button type="button" class="" id="update-setting-btn">Update Setting</button>
-              </div>                  
-            </div>
-            <div class="form-group row">
-              <label class="col-form-label mr-2" for="input-file">
-                <button type="button" class="" id="demo-data-1" onclick="LoadDemoData(1);">DEMO-1</button>                
-              </label>
-              <label class="col-form-label mr-2" for="input-file">
-                <button type="button" class="" id="demo-data-2" onclick="LoadDemoData(2);">DEMO-2</button>                
-              </label>
-              <label class="col-form-label mr-2" for="input-file">
-                <button type="button" class="" id="demo-data-3" onclick="LoadDemoData(3);">DEMO-3</button>                
-              </label>
-              <label class="col-form-label mr-6" for="input-file">
-                CURRENT RUN:&nbsp;<span id="demo-id"></span>               
-              </label>          
-            </div>
-            <!-- <div class="form-group row">
-              <label class="col-sm-12 col-form-label" for="input-file">
-                Upload data: <input type="file" class="" id="input-file" title="">
-              </label>
-            </div> -->
-            <div class="form-group row">
-              <label class="col-sm-12 col-form-label">Current/Total Scen: <input type="number" id="current-scen" min="1" value="" style="width: 3em"> / <span id="all-scen">No data loaded</span></label>            
-            </div>
+  <nav class="navbar fixed-top navbar-light bg-light ">
+    <div class="navbar-brand title-1 text-muted" href="#">TRAINING ARTIFICIAL INTELLIGENCE FOR AIR TRAFFIC CONFLICT RESOLUTION</div>
+  </nav>
 
-            <div class="form-group row">
-              <label class="col-sm-12 col-form-label" for="input-file">
-                <button type="button" class="" id="back-btn-1" onclick="back();">BACK</button>   
-                <button type="button" class="" id="next-btn-1" onclick="next();">NEXT</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <!-- <button type="button" class="" id="save-location" onclick="record_db();">SAVE THIS LOCATION</button>&nbsp;&nbsp;&nbsp; -->
-                <button type="button" class="" id="save-location" onclick="get_res();">TRAIN AND RUN</button>
-                <span id="train-progress">&nbsp;&nbsp;training in progess... <img src="img/loading.gif" height="40"></span>  
-              </label>
-            </div>
-            <div class="form-group row" hidden>
-              <div class="col-sm-12">
-                <label class="">Show Views:&nbsp;&nbsp;</label>
-                <label class="checkbox-inline"><input type="checkbox" id="show-top-view" name="show-view" checked>&nbsp;Lateral View&nbsp;&nbsp;</label>  
-                <label class="checkbox-inline"><input type="checkbox" id="show-side-view" name="show-view" checked>&nbsp;Vertical View&nbsp;&nbsp;</label>  
-                <label class="checkbox-inline"><input type="checkbox" id="show-3d-view" name="show-view">&nbsp;3D View</label>
-              </div>          
-            </div>
-            <div class="form-group row" hidden>
-                <label class="col-sm-12 col-form-label" style="font-weight: bold; font-size: 100%; color: blue;">UNIT SCALE: VERTICAL/LATERAL=<span id="vertical-scale"></span></label>          
-            </div>
-            <!-- <hr> -->
-            <div class="form-group row" hidden>
-              <div class="col-sm-12">
-                <label class="checkbox-inline">
-                    <input type="checkbox" id="show_good_cpa" onchange="UpdateSetting(this.id, this.checked);">Show Good CPA
-                </label>
-              </div>
-              <div class="col-sm-12">
-                <label class="checkbox-inline">
-                    <input type="checkbox" id="show_res_history" onchange="UpdateSetting(this.id, this.checked);">Show Resolution History
-                </label>
-              </div>
-              <div class="col-sm-12">
-                <label class="checkbox-inline">
-                    <input type="checkbox" id="show_potential_los" onchange="UpdateSetting(this.id, this.checked);" checked>Show Potential Lateral LOS in Vertical Mode
-                </label>
-              </div>              
-            </div>                         
-          </form>        
-        </div>
-      </div>
-      <!-- Columnn-2 -->
-      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" hidden>
-        <div class="control-col">
-          <div class="row">
-            <div class="col-sm-12 com-md-12">
-              <label style="font-weight: bold;">SEPARATION STRATEGY:</label>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="sep-type" id="lateral-sep" value="option1">
-                <label class="form-check-label" for="lateral-sep" id="lateral-sep-label">Lateral</label>
-              </div>
-              <!-- <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="sep-type" id="vertical-sep" value="option1">
-                <label class="form-check-label" for="vertical-sep" id="vertical-sep-label">Vertical</label>
-              </div> -->
-            </div>
-            <!-- <div class="col-sm-7">
-              <div class="row">
-                <div class="form-inline">
-                    <label class="col-form-label" for="climb-rate">Climb/Descent Rate (ft/min):</label>
-                    <label class="col-form-label"><input class="" type="range" min="100" step="100" max="6000" value="1500" id="climb-rate"></label>
-                    &nbsp;&nbsp;<label class="col-form-label" id="current-climb-rate"></label>
-                </div>
-
-              </div>
-              <div class="row">
-                <div class="">Level increment: <span id="level-change">N/A</span></div>             
-              </div>                          
-            </div> -->
-          </div>
-          <hr>
-          <div class="row">
-            <div class="col-sm-6 form-inline">
-              <label class="col-form-label" for="run-conflict">Run conflict:</label>
-              <label class="col-form-label"><input class="" type="range" min="0" step="0.5" max="100" value="0" id="run-conflict"></label>
-            </div>
-            <div class="col-sm-6 form-inline">
-              <label class="col-form-label" for="run-resolution">Run resolution:</label>
-              <label class="col-form-label"><input class="" type="range" min="0" step="0.5" max="100" value="0" id="run-resolution"></label>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="" id="download-section" style="margin-top: 10px;">
-            <a href="" download="" id="download-link" hidden></a>
-            <button type="button" class="" id="download-resolution">SAVE/DOWNLOAD RESOLUTION</button>            
-          </div>
-        </div>
-      </div>
-      <!-- Columnn-3 -->
-      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" hidden>        
-        <div class="">
-          <div class="form-check form-check-inline">
-            <label class="form-check-label" for="prefer-lateral" style="font-weight: bold;">FINAL RESOLUTION: </label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="sep-choice" id="prefer-lateral" value="lateral" disabled>
-            <label class="form-check-label" for="prefer-lateral">Lateral</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="sep-choice" id="prefer-vertical" value="vertical" disabled>
-            <label class="form-check-label" for="prefer-vertical">Vertical</label>
-          </div>         
-        </div>
-        <div class="btn-tbar">          
-          <button type="button" class="" id="prev-btn" disabled>PREV SCENARIO</button>
-          <button type="button" class="" id="next-btn" disabled>NEXT SCENARIO</button>  
-        </div>
-        <div class="control-col">
-          <div class="form-group row">
-            <div class="col-sm-12">EEG EXPERIMENT SECTION:</div>            
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-12 col-form-label" for="subject-name">Subject:
-              <input type="text" class="" id="subject-name" value="">
-            </label>
-          </div>
-          <div class="form-group row">
-            <div class="col-sm-5">
-              <label class="">Situation awareness:</label>
-              <div class="">
-                <label class="radio-inline"><input type="radio" id="is-conflict" name="scen-awareness" value="0">&nbsp;LOSS OF SEPARATION</label>  
-                <label class="radio-inline"><input type="radio" id="no-conflict" name="scen-awareness" value="1">&nbsp;NO CONFLICT</label>  
-              </div>
-            </div>
-            <div class="col-sm-7">
-              <div class="">Scenario count &nbsp;&nbsp;: <span id="scen-counter">0</span></div>
-              <div class="">Recent Score &nbsp;&nbsp;&nbsp;&nbsp;: <span id="recent-score">N/A</span></div>             
-              <div class="">Current Score  &nbsp;&nbsp;&nbsp;: <span id="current-score">N/A</span></div>              
-              <div class="">Current time left: <span id="timer">0</span></div> 
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="container-fluid" id="primary-container">    
+    <div class="row mt-4 mb-4">
+      <div class="col-xs-12 canvas-parent">
+          <canvas id="my-canvas" height="660" width="1200"></canvas>
+      </div>  	  
     </div>
-    
-    <!-- 3D sector -->
-    <div class="row" id="visual-air-space">
-      <div class="col-lg-12">
-        <h3 id="air-space-title">3D VISUALIZATION OF FLIGHT TRAJECTORIES</h3>
-      </div>    
-      <div class="col-sm-8 col-md-10 col-lg-10" id="air-space-container">
-      </div>
-      <div class="col-sm-4 col-md-2 col-lg-2" id="view-control">
-        <div class="form-group">
-            <a href="#2D">View 2D Scenario</a>
-        </div>        
-        <div class="form-group">          
-          <button type="button" class="" id="render-lateral-res">Show Lateral Res</button>
-        </div>
-        <div class="form-group">          
-            <button type="button" class="" id="render-vertical-res">Show Vertical Res</button>           
+
+    <div class="row mt-4 mb-4">
+      <div class="col-xs-12 control-btn-group">
+        <div class="btn-toolbar " role="toolbar" aria-label="Toolbar with button groups">
+          <div class="btn-group" role="group" aria-label="Third group">
+            <button type="button" class="btn btn-lg btn-danger" id="reload-btn" onclick="location.reload()">&#8635;</button>
           </div>
-        <div id="3d-space-note"></div>
-      </div>
-      <canvas id="air-space"></canvas>
-    </div> 
+          <div class="btn-group mr-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-lg btn-info" id="demo-1-btn" onclick="LoadDemoData(1);">DEMO 1</button>
+            <button type="button" class="btn btn-lg btn-info" id="demo-2-btn" onclick="LoadDemoData(2);">DEMO 2</button>
+            <button type="button" class="btn btn-lg btn-info" id="demo-3-btn" onclick="LoadDemoData(3);">DEMO 3</button>
+          </div>
+          <div class="form-group row" hidden>
+            <label class="col-sm-12 col-form-label">Current/Total Scen: <input type="number" id="current-scen" min="1" value="" style="width: 3em"> / <span id="all-scen">No data loaded</span></label>            
+          </div>
+          <div class="btn-group mr-2" role="group" aria-label="Second group">
+            <button type="button" class="btn btn-lg btn-primary navigate-btn" onclick="back();">&larr;</button>
+            <button type="button" class="btn btn-lg btn-primary navigate-btn" onclick="next();">&rarr;</button>
+          </div>
+          <div class="btn-group mr-2" role="group" aria-label="Second group">
+              <button type="text" class="btn btn-lg btn-secondary navigate-btn" id="current-scen-btn"></button>
+              <button type="text" class="btn btn-lg btn-secondary navigate-btn" id="all-scen-btn"></button>
+          </div>
+          <div class="btn-group" role="group" aria-label="Third group">
+            <button type="button" class="btn btn-lg btn-success" onclick="get_res();">TRAIN AND RUN ...</button>
+          </div>
+        </div>  
+      </div>     
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 training-progress">
+          <span id="train-progress">Training in progess... <img src="img/loading.gif" height="40"></span>
+      </div>        
+    </div>
+   
 
     <!-- PYTHON SERVER RESONPONSE WILL SHOW BELOW -->
 
     <div class="python-res">
-      <div id="res-title" class="pt-5"></div>
+      <div class="row" id="res-title" ></div>
 
-      <div id="new-train-title" class=""></div>
+      <div class="row pt-4" id="new-train-title"></div>
       <div class="row" id="res-new-train"></div>
       
-      <div id="pre-train-title" class=""></div>
+      <div class="row pt-4" id="pre-train-title" ></div>
       <div class="row" id="res-pre-train"></div>
-
     </div>
+
+    <footer class="footer text-muted bg-light mt-auto pt-3 pb-2">
+        <div class="container">
+            <span>AI TEAM @ Air Traffic Management Research Institute - Nanyang Technological University</span>
+        </div>
+    </footer>
   
   </div> <!-- end of biggest div after body tag -->
 
@@ -231,13 +81,13 @@
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/math.min.js"></script>
   <script type="text/javascript" src="js/paper-full.min.js"></script>
-  <script type="text/javascript" src="js/threejs/three.min.js"></script>
-	<script type="text/javascript" src="js/threejs/DragControls.js"></script>
+  <!-- <script type="text/javascript" src="js/threejs/three.min.js"></script> -->
+	<!-- <script type="text/javascript" src="js/threejs/DragControls.js"></script>
 	<script type="text/javascript" src="js/threejs/OrbitControls.js"></script>
-	<script type="text/javascript" src="js/threejs/TransformControls.js"></script>
+	<script type="text/javascript" src="js/threejs/TransformControls.js"></script> -->
   <script type="text/javascript">
     paper.install(window);
-    paper.setup('myCanvas');
+    paper.setup('my-canvas');
   </script>
   <script type="text/javascript" src="js/config.js"></script>
   <script type="text/javascript" src="js/VisualToolClass.js"></script>
@@ -250,8 +100,8 @@
   <script type="text/javascript" src="js/2.5d/demo3.js"></script>
   <script type="text/javascript" src="js/2.5d/sample_res.js"></script>
   <script type="text/javascript" src="js/2.5d/test_case.js"></script>
-  <script type="text/javascript" src="js/2.5d/airspace.js"></script>
-  <script type="text/javascript" src="js/2.5d/communication.js"></script>
+  <!-- <script type="text/javascript" src="js/2.5d/airspace.js"></script> -->
+  <!-- <script type="text/javascript" src="js/2.5d/communication.js"></script> -->
   <script type="text/javascript" src="js/2.5d/15Aug.js"></script>
 </body>
 

@@ -53,8 +53,8 @@ inputTool.onMouseUp = function GlobalMouseUp (event) {
         save_current_res();
         AutoPlayResolution();
     }
-    console.log("mouse button released:" , event.point.x, event.point.y);
-    console.log(ownshipLateralResTop.segments[1].point.x, "" , ownshipLateralResTop.segments[1].point.y);
+    // console.log("mouse button released:" , event.point.x, event.point.y);
+    // console.log(ownshipLateralResTop.segments[1].point.x, "" , ownshipLateralResTop.segments[1].point.y);
 }
 
 

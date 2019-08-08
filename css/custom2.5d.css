@@ -1,17 +1,15 @@
 ﻿body {
-    font-family: "Inconsolata";
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 8pt;
     overflow-y: scroll;
     margin: 0px;
 }
 
-#myCanvas {
-    padding: 0;
-    margin: auto;
-    display: block;
-    margin-bottom: 10px; 
-    margin-top: 10px;
-}
 
+.canvas-parent {
+    margin-right: auto;
+    margin-left: auto;
+}
 
 hr {
     margin-top: 10px;
@@ -24,29 +22,16 @@ hr {
     margin: 0px 0px;
 }
 
-
 .bold-text {
     font-weight: bold !important;
 }
 
 #primary-container {
-    padding: 0;
-}
-
-.control-col {
-    padding: 15px 10px;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 5px;
-    border-color: lightgray;
+    padding-top: 50px;
 }
 
 .btn-tbar {
     margin-bottom: 10px;
-}
-
-#input-file {
-    /* color: transparent; */
 }
 
 #air-space {
@@ -74,6 +59,11 @@ hr {
     width: 100%;
 }
 
+.python-res {
+    margin-top: 30px;
+    /* margin-bottom: 200px; */
+}
+
 #res-title {
     display: block;
     text-align: center;
@@ -85,7 +75,7 @@ hr {
     text-align: center;
     font-size: 18pt;
     color: green;
-    margin: 20px 0px;
+    margin: 10px 0px;
 }
 
 #pre-train-title {
@@ -93,9 +83,48 @@ hr {
     text-align: center;
     font-size: 18pt;
     color: blue;
-    margin: 20px 0px;
+    margin: 10px 0px;
 }
 
-.python-res {
-    margin-bottom: 200px;
+#res-pre-train {
+    margin-bottom: 50px;
+}
+
+.training-progress {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 120%;
+}
+
+.control-btn-group {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn {
+    margin: 2px !important;
+}
+
+.btn-group {
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    /* background-color: red;
+    color: white; */
+    text-align: center;
+    font-size: 150%;
+}
+
+.acceptance-label {
+    text-align: center;
+}
+
+.title-1 {
+    margin: auto;
 }

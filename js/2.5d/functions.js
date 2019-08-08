@@ -173,8 +173,8 @@ function ShowAScenario(currentScenarioId) {
     } 
     DectectAndShowLateralLOS(); 
     EnableVerticalSeparation(false);
-    ResetAllFlight(); // 3D
-    RenderAllFlight();  // 3D
+    // ResetAllFlight(); // 3D
+    // RenderAllFlight();  // 3D
 }
 
 // Function to reset environment variables
@@ -366,6 +366,7 @@ function LateralConflictDetector(ownship, ownshipPointLevel, ownshipSpeed, intru
 
 // Function to detect and show LOS when performing lateral separation
 function DectectAndShowLateralLOS(mode) {
+    overal_los = false;
     let ownship = ownshipLateralResTop;
     let verticalMode = false;
     if (arguments.length === 1 & mode === 'for-vertical-analyze') {
@@ -374,7 +375,8 @@ function DectectAndShowLateralLOS(mode) {
     }    
     for (let i=0; i<surroundingFlight; i++) {
         let los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, srdFlightTop[i], srdPointLevel[i], commonSpeed);        
-        if (los[0]) { // lateral loss detected                                    
+        if (los[0]) { // lateral loss detected   
+            overal_los = true;                                 
             if (!srdLevelSafe[i]) { // intruder level in danger zone, show actual los marker   
                 // surroundingLos[i].children[0].segments = [los[3], los[4]];             
                 // surroundingLos[i].children[0].strokeColor = red;
@@ -427,6 +429,7 @@ function DectectAndShowLateralLOS(mode) {
     // check against intruder
     los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, intruderTop, intruderPointLevel, commonSpeed);    
     if (los[0]) {
+        overal_los = true;
         // intruderLos.children[0].strokeColor = red;
         // intruderLos.children[0].dashArray = null;
         // intruderLos.children[0].visible = true;
@@ -456,7 +459,7 @@ function DectectAndShowLateralLOS(mode) {
         hue = 330- (los_box[0].segments[2].point.y - cpaThreshold * 1.333) / (box_height - cpaThreshold * 1.333) * (255 - 360) * color_jupm;
     }
     los_box[0].fillColor.hue = hue;
-    
+    return overal_los;
 }
 
 

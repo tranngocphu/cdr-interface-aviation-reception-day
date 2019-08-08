@@ -45,7 +45,7 @@ function LoadDemoData (id){
     allResolution = [];
     switch (id) {
         case 1:
-            allScen = demo_data_1;
+            allScen = demo_data_1;                        
         case 2:
             allScen = demo_data_2;
         case 3:
@@ -54,7 +54,9 @@ function LoadDemoData (id){
     currentScenarioId = 0;    
     allScen.map(function(element) { return ParseScenarioData(element) } );        
     $('#all-scen').html(allScen.length);
+    $('#all-scen-btn').html(allScen.length);
     $('#current-scen').val(0);
+    $('#current-scen-btn').html(0);
     showConflictIndicator = true;
     visual_indicator_cover.visible = false;
     console.log('Finished loading data of ' + allScen.length + ' scenarios.');
@@ -64,6 +66,10 @@ function LoadDemoData (id){
     demoMode = true; 
     $('#demo-id').html(id.toString());
     all_simple_res.demo_id = id;
+    grayout_button(1);
+    grayout_button(2);
+    grayout_button(3);
+    hightlight_button(id);
 }
 
 // Next button
@@ -123,6 +129,7 @@ $('#current-scen').on('change', function SpecifyScenarioNumber() {
     $('#lateral-sep').prop('checked', false);  
     $('#vertical-sep').prop('checked', false);    
     StopPlayingResolution();
+    $('#current-scen-btn').html($('#current-scen').val());
 })
 
 // ========================================================
@@ -269,4 +276,18 @@ $('#show-3d-view').change(function ShowTopView(){
 })
 
 
+function hightlight_button(id) {
+    var btn = "#demo-" + id.toString() + "-btn";
+    $(btn).removeClass("btn-info");
+    $(btn).addClass("btn-warning");    
+}
 
+function grayout_button(id) {
+    var btn = "#demo-" + id.toString() + "-btn";
+    $(btn).removeClass("btn-warning");
+    $(btn).addClass("btn-info");    
+}
+
+
+$('#current-scen-btn').html(0);
+$('#all-scen-btn').html(0);
