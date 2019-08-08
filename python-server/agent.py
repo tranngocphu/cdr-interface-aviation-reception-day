@@ -100,7 +100,7 @@ new_model = train_agent(df_20_conflict, 330, max_num)
 # ===============
 
 # prepare html template:
-img_element = """<div class="col-md-4 col-lg-3 col-xl-2 pt-2 pb-2"><img class="img-fluid res-img" src="data/img/<img_file>" onclick="run_res(@id, @x, @y);"></img><div class="acceptance-label" id="label-@label" name="@id-@x-@y"></div></div>"""
+img_element = """<div class="col-md-4 col-lg-3 col-xl-2 pt-2 pb-2"><div class="acceptance-label" id="label-@label" name="@id-@x-@y"></div><img class="img-fluid res-img" src="data/img/<img_file>" onclick="run_res(@id, @x, @y);"></img></div>"""
 pre_train_data = ''
 new_train_data = ''
 

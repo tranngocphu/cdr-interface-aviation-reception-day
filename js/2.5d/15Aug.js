@@ -84,8 +84,10 @@ function show_label() {
         var los = DectectAndShowLateralLOS();
         if ( los ) {
             $(label_id).html("Rejected");
+            $(label_id).addClass('rejected');
         } else {
             $(label_id).html("Accepted");
+            $(label_id).addClass('accepted');
         }
         Reset();
     }

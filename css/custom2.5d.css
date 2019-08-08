@@ -123,6 +123,15 @@ hr {
 
 .acceptance-label {
     text-align: center;
+    font-size: 200%;
+}
+
+.accepted {
+    color: green;
+}
+
+.rejected {
+    color: red;
 }
 
 .title-1 {
