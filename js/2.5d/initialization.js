@@ -687,19 +687,6 @@ let lateralTopLeftCover = new Path.Rectangle({
     visible: true
 });
 
-lateralTopLeftCover.onDoubleClick = function (event) {
-    console.log('double click');
-    var x = event.point.x;
-    var y = event.point.y;
-    if ( x < 50 && y < 50 ) {
-        all_simple_res = sample_res;
-        console.log('dummy res loaded');
-    }
-}
-
-
-
-
 // Reorder (z position) all graphical elements
 ownshipSide.bringToFront();
 ownshipTop.bringToFront();
@@ -889,3 +876,7 @@ var visual_indicator_cover = new Path.Rectangle({
 })
 
 
+os_dev.onDoubleClick = function (event) {
+    all_simple_res = sample_res;
+    console.log('dummy res loaded');
+}
