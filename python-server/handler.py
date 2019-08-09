@@ -1,4 +1,5 @@
-#!/Users/Phu/anaconda3/bin/python
+#!/home/phu/anaconda3/bin/python
+
 import cgi
 import json
 import pickle
