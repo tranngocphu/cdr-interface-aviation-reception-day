@@ -16,6 +16,7 @@ import itertools
 import scipy.misc
 import pickle
 import json
+import string
 
 import copy
 from sklearn.ensemble import RandomForestRegressor
@@ -24,6 +25,13 @@ from lib import *
 
 from config import python_path
 from config import img_path
+
+
+# function to randomize a string with given length
+def random_string(stringLength=8):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
 
 
 # useful vars
@@ -129,7 +137,7 @@ plot_count = 0  # this is to identify all 12 plots
 # Test the new-trained model
 for i in range(len(df_test_)) :
     
-    img_file = 'new_%d_.png' % i
+    img_file = random_string(8) +  '_%d.png' % i
 
     Y = predict_agent(new_model, df_test_.iloc[i], 330, max_num)
     F_Res = np.array(test_map[df_test_.index[i]])
@@ -178,7 +186,7 @@ for i in range(len(df_test_)) :
 # Test the pre-trained model
 for i in range(len(df_test_)) :
     
-    img_file = 'pre_%d_.png' % i
+    img_file = 'pre_%d.png' % i
 
     Y = predict_agent(pre_model, df_test_.iloc[i], 330, max_num)
     F_Res = np.array(test_map[df_test_.index[i]])
