@@ -9,6 +9,5 @@ access_log
 python-server/__pycache__/agent.cpython-37.pyc
 python-server/__pycache__/function_lib.cpython-37.pyc
 python-server/__pycache__/lib.cpython-37.pyc
-python-server/data/unseen_map_pickle
 access_log
 error_log
