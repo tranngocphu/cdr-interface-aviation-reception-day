@@ -186,7 +186,7 @@ for i in range(len(df_test_)) :
 # Test the pre-trained model
 for i in range(len(df_test_)) :
     
-    img_file = 'pre_%d.png' % i
+    img_file = random_string(8) + '_pre_%d.png' % i
 
     Y = predict_agent(pre_model, df_test_.iloc[i], 330, max_num)
     F_Res = np.array(test_map[df_test_.index[i]])
