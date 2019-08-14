@@ -1,0 +1,2 @@
+python_path = '/Volumes/Data/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/python-server/'
+img_path = '/Volumes/Data/tranngocphu@github.com/conflict-resolution-interface/cdr-interface/data/img/'
