@@ -23,8 +23,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 from lib import *
 
-from config import python_path
-from config import img_path
+from config import python_path, img_path, client_id
 
 
 # function to randomize a string with given length
@@ -77,7 +76,7 @@ with open(python_path + "data/pre_train_model", 'rb') as f :
 
 # load data received from the client after visitor finished 20 scenarios
 # the pickle was created in handler.py 
-with open(python_path + "data/client_data", 'rb') as f :
+with open(python_path + "data/" + client_id, 'rb') as f :
     client_data = pickle.load(f)
 
 # load 20 conflict scenarios

@@ -1,7 +1,6 @@
 function get_res () {
     $(':button').prop('disabled', true);
     $('#reload-btn').prop('disabled', false);
-    let data = "res=" + JSON.stringify(all_simple_res);
     $('#train-progress').show();
     $('#res-title').html("");
     $('#pre-train-title').html("");
@@ -28,7 +27,10 @@ function get_res () {
     $.ajax({
         type: "POST",
         url: "python-server/handler.py",
-        data: { res : JSON.stringify(all_simple_res) },
+        data: { 
+            res : JSON.stringify(all_simple_res), 
+            id : generate_random_string(12) 
+        },
         timeout: 80000,
         error: function(xhr, textStatus, errorThrown) {
             alert(textStatus);
@@ -106,4 +108,14 @@ function load_test_case()  {
     $('#prev-btn').prop('disabled', false);
     Reset();  
     demoMode = true; 
+}
+
+function generate_random_string(string_length){
+    let random_string = '';
+    let random_ascii;
+    for(let i = 0; i < string_length; i++) {
+        random_ascii = Math.floor((Math.random() * 25) + 97);
+        random_string += String.fromCharCode(random_ascii)
+    }
+    return random_string
 }
