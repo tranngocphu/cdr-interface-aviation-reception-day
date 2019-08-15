@@ -13,3 +13,4 @@ access_log
 error_log
 python-server/__pycache__/config.cpython-37.pyc
 python-server/data
+python-server/__pycache__
