@@ -41,15 +41,18 @@ $('#input-file').change(function ButtonInputFile() {
     reader.readAsText(file);
 })
 
-function LoadDemoData (id){
+function LoadDemoData (id) {
     allResolution = [];
     switch (id) {
         case 1:
-            allScen = demo_data_1;                        
+            allScen = demo_data_1; 
+            break;                       
         case 2:
             allScen = demo_data_2;
+            break;
         case 3:
             allScen = demo_data_3;
+            break;
     } 
     currentScenarioId = 0;    
     allScen.map(function(element) { return ParseScenarioData(element) } );        
