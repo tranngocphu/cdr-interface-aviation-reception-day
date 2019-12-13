@@ -18,7 +18,7 @@ pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 1000)
 
 warnings.filterwarnings("error")
-sys.path.insert(0, '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/python-code/python_lib')
+# sys.path.insert(0, '/Volumes/DATA/tranngocphu@github.com/conflict-resolution-interface/python-code/python_lib')
 from function_lib import *
 
 # Vars and Funcs declaration

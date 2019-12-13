@@ -14,3 +14,5 @@ error_log
 python-server/__pycache__/config.cpython-37.pyc
 python-server/data
 python-server/__pycache__
+python-server/.DS_Store
+img/.DS_Store
