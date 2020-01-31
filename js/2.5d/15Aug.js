@@ -38,8 +38,11 @@ function get_res () {
         success: function(data){
             console.log(data);
             if ( data.stt ) {
+                if ($(window).width() > 1800) {
+                    adjust_layout("response");
+                }                
                 $('#train-progress').hide();
-                $('#res-title').html("Artificial Intelligent Models Performance on Six Unseen Scenarios");  
+                $('#res-title').html("Artificial Intelligent Models Performance<br/>on Six Unseen Scenarios");  
                 $('#pre-train-title').html("Resolutions Suggested by Our Pre-Trained Model");
                 $('#res-pre-train').html(data.pre_data);
                 $('#new-train-title').html("Resolutions Suggested by Your New-Trained Model");
@@ -118,4 +121,25 @@ function generate_random_string(string_length){
         random_string += String.fromCharCode(random_ascii)
     }
     return random_string
+}
+
+
+function reload_btn() {
+    location.reload();
+    $(window).load(function() {
+        $("#interaction").addClass("hello");
+    });
+}
+
+
+function adjust_layout(mode) {
+    delayed = 500;
+    if (mode=='response') {
+        $("#interaction").removeClass("col-lg-12 col-xl-12", {duration: delayed}).addClass("col-lg-8 col-xl-8", {duration: delayed});
+        $("#response").removeClass("col-lg-12 col-xl-12", {duration: delayed}).addClass("col-lg-4 col-xl-4", {duration: delayed});
+    }
+    else if (mode=="interaction") {
+        $("#interaction").removeClass("col-lg-8 col-xl-8").addClass("col-lg-12 col-xl-12");
+        $("#response").removeClass("col-lg-4 col-xl-4").addClass("col-lg-12 col-xl-12");
+    }
 }

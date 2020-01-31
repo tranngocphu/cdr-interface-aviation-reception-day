@@ -67,7 +67,7 @@ hr {
 #res-title {
     display: block;
     text-align: center;
-    font-size: 22pt;
+    font-size: 18pt;
     color: #6e6e6e;
 }
 
@@ -107,8 +107,8 @@ hr {
 }
 
 .btn-group {
-    margin-left: 20px !important;
-    margin-right: 20px !important;
+    margin-left: 10px !important;
+    margin-right: 10px !important;
 }
 
 .footer {

@@ -16,6 +16,9 @@ inputTool.onMouseDown = function GlobalMouseDown(event) {
     if ( resolutionIsRunning ) {
         StopPlayingResolution();
     }
+    if (sectorBorder.position.getDistance(event.point) <= sectorRadius) {
+        performingLateralSeparation = true;
+    }
 }
 
 // inputTool.onMouseMove = function GlobalMouseMove (event) { 

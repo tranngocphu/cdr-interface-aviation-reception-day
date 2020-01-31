@@ -16,3 +16,5 @@ python-server/data
 python-server/__pycache__
 python-server/.DS_Store
 img/.DS_Store
+data/.DS_Store
+.DS_Store
