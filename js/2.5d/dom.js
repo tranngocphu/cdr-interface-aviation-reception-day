@@ -34,6 +34,7 @@ $('#input-file').change(function ButtonInputFile() {
         $('#prefer-vertical').prop('disabled', true);
         Reset();
         demoMode = false;
+        $('#current-scen').prop('disabled', true);
     }
     let file = $('#input-file')[0].files[0];
     reader.readAsText(file);
@@ -57,13 +58,7 @@ $('#demo-data').click(function LoadDemoData (){
 $('#next-btn').click(function ButtonNext() {        
     if (currentScenarioId === allScen.length) {
         return
-    }
-    if (!demoMode) {
-        $('#next-btn').prop('disabled', true);           
-        $('#prev-btn').prop('disabled', true);
-    } else {
-        SaveResolution(currentScenarioId); 
-    }          
+    }         
     Reset();    
     currentScenarioId += 1;
     ShowAScenario(currentScenarioId); 
@@ -74,8 +69,13 @@ $('#next-btn').click(function ButtonNext() {
     $('#prefer-lateral').prop('checked', false);
     $('#prefer-lateral').prop('disabled', true);
     $('#prefer-vertical').prop('checked', false);
-    $('#prefer-vertical').prop('disabled', true);
-
+    $('#prefer-vertical').prop('disabled', true);    
+    $('#prev-btn').prop('disabled', false);        
+    if (allResolution.length >= currentScenarioId) {
+        $('#next-btn').prop('disabled', false); 
+    } else {
+        $('#next-btn').prop('disabled', true); 
+    }          
 })
 
 // Previous button
@@ -94,10 +94,12 @@ $('#prev-btn').click(function ButtonPrevious() {
     $('#prefer-lateral').prop('disabled', true);
     $('#prefer-vertical').prop('checked', false);
     $('#prefer-vertical').prop('disabled', true);
-    if (!demoMode) {
-        $('#next-btn').prop('disabled', true);           
-        $('#prev-btn').prop('disabled', true);
-    }
+    $('#prev-btn').prop('disabled', false);        
+    if (allResolution.length >= currentScenarioId) {
+        $('#next-btn').prop('disabled', false); 
+    } else {
+        $('#next-btn').prop('disabled', true); 
+    }  
 })
 
 // Current scenario input 
@@ -124,13 +126,57 @@ $('#show_res_history').change(function ShowResolutionHistory(){
 
 
 // =========================================================
-// Separation selection
-$('#lateral-sep').click(function ButtonRadioLateralSep() {
-    EnableVerticalSeparation(false);
+// Aircraft selection
+
+function SelectAircraft(color) {
+    $('#lateral-sep').prop('disabled', false);
+    $('#vertical-sep').prop('disabled', false);
+    selectedAircraft = color;    
+    radioButtonLabel = '#' + color + '-aircraft-label';
+    $('#red-aircraft-label').removeClass('bold-text');
+    $('#blue-aircraft-label').removeClass('bold-text');
+    $(radioButtonLabel).addClass('bold-text');
+    if (lateralSeparation & color == 'blue') {
+        // the ownship selected
+        ownshipLateralResTop.visible = true;
+        ownshipLateralResSide.visible = true;        
+        intruderLateralResTop.visible = false;
+        intruderLateralResSide.visible = false;
+    }    
+    if (lateralSeparation & color == 'red') {
+        // the intruder selected
+        ownshipLateralResTop.visible = false;
+        ownshipLateralResSide.visible = false;        
+        intruderLateralResTop.visible = true;
+        intruderLateralResSide.visible = true;         
+    }
+    DectectAndShowLateralLOS();       
+    console.log(selectedAircraft);
+}
+
+$('#blue-aircraft').click(function ButtonRadioBlueAircraft() {
+    // ownship selected
+    SelectAircraft('blue');
+    SetLateralSepEventHandler();  
+    
 })
 
-$('#vertical-sep').click(function ButtonRadioVerticalSep() {
+$('#red-aircraft').click(function ButtonRadioBlueAircraft() {
+    // intruder selected
+    SelectAircraft('red');
+    SetLateralSepEventHandler();
+})
+
+
+// Separation selection
+$('#lateral-sep').click(function ButtonRadioLateralSep() {    
+    EnableVerticalSeparation(false);
+    SetLateralSepEventHandler();
+})
+
+$('#vertical-sep').click(function ButtonRadioVerticalSep() {    
     EnableVerticalSeparation(true);  
+    SetLateralSepEventHandler();
 })
 
 

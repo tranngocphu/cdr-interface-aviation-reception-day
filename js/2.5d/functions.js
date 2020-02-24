@@ -59,6 +59,7 @@ function LoadConflictFlight(currentScenario) {
     // flight level
     intruderLevel = currentScenario.intruder_level;
     intruderPointLevel = intruderLevel * 100 * feet2nm * nm2point;
+    intruderNewPointLevel = intruderPointLevel;
     
     // OWNSHIP:
     // load ownship - top view
@@ -77,26 +78,49 @@ function LoadConflictFlight(currentScenario) {
     ownshipNewPointLevel = ownshipPointLevel;
     
     // Prepare data for resolution
+
     // add 2 more points as place holder for vertical separation handles
+    // // ownship
     ownshipSide.insert(1, ownshipSide.firstSegment.point.add( 0 * defaultHandleDistanceX, 0));
     ownshipSide.insert(2, ownshipSide.firstSegment.point.add( 0 * defaultHandleDistanceX, 0));
+    // // intruder
+    intruderSide.insert(1, intruderSide.firstSegment.point.add( 0 * defaultHandleDistanceX, 0));
+    intruderSide.insert(2, intruderSide.firstSegment.point.add( 0 * defaultHandleDistanceX, 0));
+    
     // Snap 2 handles to the added points, and hide them
     sideHandle1.position = ownshipSide.segments[1].point;  
     sideHandle1.visible = false;
     sideHandle2.position = ownshipSide.segments[2].point;
     sideHandle2.visible = false;
+    
     // Snap overlay to ownship side and hide
+    // // ownship
     ownshipOverlaySide[1].segments = [ ownshipSide.segments[1].point, ownshipSide.segments[2].point ];
     ownshipOverlaySide[1].visible = false;
     ownshipOverlaySide[2].segments = [ ownshipSide.segments[2].point, ownshipSide.segments[3].point ];
     ownshipOverlaySide[2].visible = false;
+    // // intruder
+    intruderOverlaySide[1].segments = [ intruderSide.segments[1].point, intruderSide.segments[2].point ];
+    intruderOverlaySide[1].visible = false;
+    intruderOverlaySide[2].segments = [ intruderSide.segments[2].point, intruderSide.segments[3].point ];
+    intruderOverlaySide[2].visible = false;
+    
     // initialize lateral resolution as place holder (top and side)
+    // // ownship
     ownshipLateralResTop.firstSegment.point = ownshipTop.firstSegment.point;
     ownshipLateralResTop.lastSegment.point  = ownshipTop.lastSegment.point;
     ownshipLateralResTop.segments[1].point  = ownshipTop.getPointAt(ownshipTop.length/2);
     ownshipLateralResSide.children[0].segments[0].point = hidden;
     ownshipLateralResSide.children[0].segments[1].point = hidden;
     ownshipLateralResSide.children[0].segments[2].point = hidden;
+    // // intruder
+    intruderLateralResTop.firstSegment.point = intruderTop.firstSegment.point;
+    intruderLateralResTop.lastSegment.point  = intruderTop.lastSegment.point;
+    intruderLateralResTop.segments[1].point  = intruderTop.getPointAt(intruderTop.length/2);
+    intruderLateralResSide.children[0].segments[0].point = hidden;
+    intruderLateralResSide.children[0].segments[1].point = hidden;
+    intruderLateralResSide.children[0].segments[2].point = hidden;
+    
     // initialize vertical resolution as place holder (top)
     ownshipVerticalResTop.segments[0].point = ownshipTop.firstSegment.point;
     ownshipVerticalResTop.segments[3].point = ownshipTop.lastSegment.point;
@@ -188,6 +212,7 @@ function Reset() {
     viewLink.map(function(element) {
         element.visible = false;
     })
+    selectedAircraft = false;
     verticalSeparation = false;
     lateralSeparation  = false;
     $('#climb-rate').val(1500);
@@ -199,18 +224,26 @@ function Reset() {
     $('#vertical-sep-label').removeClass('bold-text'); 
     $('#lateral-sep-label').removeClass('bold-text'); 
     hasLateralRes = false;
-    hasVerticalRes = false;
+    hasVerticalRes = false;    
     $('#lateral-res').prop('disabled', true);
     $('#vertical-res').prop('disabled', true);
     $('#lateral-res').prop('checked', false);
     $('#vertical-res').prop('checked', false);
+    $('#lateral-sep').prop('disabled', true);
+    $('#vertical-sep').prop('disabled', true);
+    $('#lateral-sep').prop('checked', false);
+    $('#vertical-sep').prop('checked', false);
+    $('#blue-aircraft').prop('checked', false);
+    $('#red-aircraft').prop('checked', false);
     $('#submit-btn').prop('disabled', true);
     ownshipLateralResSide.visible = false;
     ownshipLateralResSide.children[1].position = hidden;
-    surroundingLos.map(function(element) {
-        element.children[0].segments = [hidden, hidden],
-        element.children[1].position = hidden
-    });
+    intruderLateralResSide.visible = false;
+    intruderLateralResSide.children[1].position = hidden;
+    // surroundingLos.map(function(element) {
+    //     element.children[0].segments = [hidden, hidden],
+    //     element.children[1].position = hidden
+    // });
     surroundingLos.map(function(element) {
         element.children[0].segments = [hidden, hidden];
         element.children[1].position = hidden;
@@ -330,15 +363,31 @@ function LateralConflictDetector(ownship, ownshipPointLevel, ownshipSpeed, intru
 
 
 // Function to detect and show LOS when performing lateral separation
+// If no argument provided, go for lateral mode
 function DectectAndShowLateralLOS(mode) {
-    let ownship = ownshipLateralResTop;
     let verticalMode = false;
+    let host, hostPointLevel;
     if (arguments.length === 1 & mode === 'for-vertical-analyze') {
-        ownship = ownshipTop;
-        verticalMode = true;
-    }    
+        if (selectedAircraft == 'blue') {
+            host = ownshipTop;            
+        } else if (selectedAircraft == 'red') {
+            host = intruderTop;            
+        }
+        verticalMode = true;        
+    } 
+    // check against srd flights    
+    if (selectedAircraft == 'blue') {
+        host = ownshipLateralResTop;
+        hostPointLevel = ownshipPointLevel;
+    } else if (selectedAircraft == 'red') {
+        host = intruderLateralResTop;
+        hostPointLevel = intruderPointLevel;
+    } else {
+        host = ownshipLateralResTop;
+        hostPointLevel = ownshipPointLevel;
+    }
     for (let i=0; i<surroundingFlight; i++) {
-        let los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, srdFlightTop[i], srdPointLevel[i], commonSpeed);        
+        let los = LateralConflictDetector(host, hostPointLevel, commonSpeed, srdFlightTop[i], srdPointLevel[i], commonSpeed);        
         if (los[0]) {                                    
             if (!srdLevelSafe[i]) { // intruder level in danger zone, show actual los marker   
                 surroundingLos[i].children[0].segments = [los[3], los[4]];             
@@ -366,15 +415,27 @@ function DectectAndShowLateralLOS(mode) {
             surroundingLos[i].children[3].position = hidden;
         }
     }
+
     // check against intruder
-    los = LateralConflictDetector(ownship, ownshipPointLevel, commonSpeed, intruderTop, intruderPointLevel, commonSpeed);
+    if (selectedAircraft == 'blue') {
+        los = LateralConflictDetector(ownshipLateralResTop, ownshipPointLevel, commonSpeed, intruderTop, intruderPointLevel, commonSpeed);
+    } else if (selectedAircraft == 'red') {
+        los = LateralConflictDetector(intruderLateralResTop, intruderPointLevel, commonSpeed, ownshipTop, ownshipPointLevel, commonSpeed);
+    } else {
+        los = LateralConflictDetector(ownshipLateralResTop, ownshipPointLevel, commonSpeed, intruderTop, intruderPointLevel, commonSpeed);    
+    }   
     intruderLos.children[0].segments = [los[3], los[4]];
     if (los[0]) {
         intruderLos.children[0].strokeColor = red;
         intruderLos.children[0].dashArray = null;
         intruderLos.children[0].visible = true;
         intruderLos.children[1].position = los[3].add(los[4]).divide(2);
-        intruderLos.children[2].position = intruderSide.getPointAt(commonSpeed * los[2]);
+        if (selectedAircraft == 'blue') {
+            intruderLos.children[2].position = intruderSide.getPointAt(commonSpeed * los[2]);
+        } else if (selectedAircraft == 'red') {
+            intruderLos.children[2].position = ownshipSide.getPointAt(commonSpeed * los[2]);
+        }
+        
     } else {
         intruderLos.children[0].strokeColor = black;
         intruderLos.children[0].dashArray = lineWidth.dashArray;
@@ -548,10 +609,17 @@ function EnableVerticalSeparation(state) {
     })
     sideHandle1.visible = state;
     sideHandle2.visible = state;
-    ownshipLateralResTop.visible = !state; 
-    ownshipLateralResSide.visible = !state; 
+    
+    if (selectedAircraft == 'blue') {
+        ownshipLateralResTop.visible = !state; 
+        ownshipLateralResSide.visible = !state; 
+    } else if (selectedAircraft == 'red') {
+        intruderLateralResTop.visible = !state; 
+        intruderLateralResSide.visible = !state; 
+    } else { }
+       
     topFinishLevelChange.map(function(element){
-        element.visible = false; // <================================================================ recently changed
+        element.visible = false;
         return element
     })
     // Reset los indicators
@@ -561,7 +629,6 @@ function EnableVerticalSeparation(state) {
         element.children[2].position = hidden;
         element.children[3].position = hidden;
         element.children[3].visible  = true;
-        return element
     });
     intruderLos.children[0].segments = [hidden, hidden];
     intruderLos.children[1].position = hidden;
@@ -590,18 +657,31 @@ function EnableVerticalSeparation(state) {
         if (hasVerticalRes) {
             DectectAndShowVerticalLOS ();
         } else {
-            DectectAndShowLateralLOS('for-vertical-analyze');
+            // // comment the line below ==> no need to show current lateral res when just switch to vertical sep mode
+            // DectectAndShowLateralLOS('for-vertical-analyze');
         }
         
         
     }
     else {
-        // if lateral separation is selected, restore y position of all ownshipSide's points. Its overlay is untouched
-        ownshipSide.segments[1].point.y = ownshipSide.firstSegment.point.y;
-        ownshipSide.segments[2].point.y = ownshipSide.firstSegment.point.y;
-        ownshipSide.lastSegment.point.y = ownshipSide.firstSegment.point.y;
+        // if lateral separation is selected, restore y position of all ownshipSide's and intruderSide's points. Its overlay is untouched
+        
+        if (selectedAircraft == 'blue') {
+            ownshipSide.segments[1].point.y = ownshipSide.firstSegment.point.y;
+            ownshipSide.segments[2].point.y = ownshipSide.firstSegment.point.y;
+            ownshipSide.lastSegment.point.y = ownshipSide.firstSegment.point.y;
+        }
+
+        if (selectedAircraft == 'red') {                    
+            intruderSide.segments[1].point.y = intruderSide.firstSegment.point.y;
+            intruderSide.segments[2].point.y = intruderSide.firstSegment.point.y;
+            intruderSide.lastSegment.point.y = intruderSide.firstSegment.point.y;
+        }    
+        
+        
         $('#vertical-sep-label').removeClass('bold-text'); 
         $('#lateral-sep-label').addClass('bold-text');
+        
         DectectAndShowLateralLOS();    
     }
 }
@@ -614,7 +694,7 @@ function SaveResolution(currentScenatioId) {
     }
     currentResolution = {
         scenario_id: currentScenarioId,
-        lateral: {
+        lateral_blue: {
             top: { 
                 segments: [
                     { x: ownshipLateralResTop.segments[0].point.x, y: ownshipLateralResTop.segments[0].point.y },
@@ -626,6 +706,20 @@ function SaveResolution(currentScenatioId) {
                     { x: ownshipLateralResSide.children[0].segments[0].point.x, y: ownshipLateralResSide.children[0].segments[0].point.y },
                     { x: ownshipLateralResSide.children[0].segments[1].point.x, y: ownshipLateralResSide.children[0].segments[1].point.y },
                     { x: ownshipLateralResSide.children[0].segments[2].point.x, y: ownshipLateralResSide.children[0].segments[2].point.y },
+                ]}
+            },
+        lateral_red: {
+            top: { 
+                segments: [
+                    { x: intruderLateralResTop.segments[0].point.x, y: intruderLateralResTop.segments[0].point.y },
+                    { x: intruderLateralResTop.segments[1].point.x, y: intruderLateralResTop.segments[1].point.y },
+                    { x: intruderLateralResTop.segments[2].point.x, y: intruderLateralResTop.segments[2].point.y },
+                ]},
+            side: { 
+                segments: [
+                    { x: intruderLateralResSide.children[0].segments[0].point.x, y: intruderLateralResSide.children[0].segments[0].point.y },
+                    { x: intruderLateralResSide.children[0].segments[1].point.x, y: intruderLateralResSide.children[0].segments[1].point.y },
+                    { x: intruderLateralResSide.children[0].segments[2].point.x, y: intruderLateralResSide.children[0].segments[2].point.y },
                 ]}
             },
         vertical: {
@@ -673,6 +767,7 @@ function LoadSavedResolution(currentScenarioId) {
     if (!allResolution[idx]) {
         return
     }
+    // Overlay
     // Load saved ownshipOverlaySide
     ownshipOverlaySide[1].segments = allResolution[idx].vertical.side[1].segments;
     ownshipOverlaySide[2].segments = allResolution[idx].vertical.side[2].segments;
@@ -686,16 +781,25 @@ function LoadSavedResolution(currentScenarioId) {
     // Load saved ownshipOverlayTop
     ownshipOverlayTop[1].segments = allResolution[idx].vertical.top[1].segments;
     ownshipOverlayTop[2].segments = allResolution[idx].vertical.top[2].segments;
-    // Load saved ownshipLateralRes
-    ownshipLateralResTop.segments = allResolution[idx].lateral.top.segments;
-    // Load saved ownshipLateralResSide
-    ownshipLateralResSide.children[0].segments = allResolution[idx].lateral.side.segments;
-    ownshipLateralResSide.children[1].position = allResolution[idx].lateral.side.segments[1];  // turn point marker posotion in side view
+    
+    // Lateral resolution
+    // Load saved lateral resolutions top
+    ownshipLateralResTop.segments = allResolution[idx].lateral_blue.top.segments;
+    intruderLateralResTop.segments = allResolution[idx].lateral_red.top.segments;
+    
+    // Load saved lateral resolutions side
+    ownshipLateralResSide.children[0].segments = allResolution[idx].lateral_blue.side.segments;
+    ownshipLateralResSide.children[1].position = allResolution[idx].lateral_blue.side.segments[1];  // turn point marker position in side view
+    intruderLateralResSide.children[0].segments = allResolution[idx].lateral_red.side.segments;
+    intruderLateralResSide.children[1].position = allResolution[idx].lateral_red.side.segments[1];  // turn point marker position in side view
     // Show all saved resolutions
+    // blue one: ownship
     let condition = ownshipOverlaySide[1].lastSegment.point.y != ownshipSide.firstSegment.point.y;
     ownshipOverlaySide.map(function(element) { element.visible = condition; return element });
     ownshipOverlayTop.map(function(element) { element.visible = condition; return element });
     ownshipLateralResTop.visible = true;
+    // red one: intruder
+    intruderLateralResTop.visible = true;
 }
 
 
@@ -769,5 +873,7 @@ function ReorderElement() {
 // Function to update setting
 function UpdateSetting(settingName, value) {
     setting[settingName] = value;
-    ReadSetting();
+    ReadSetting();    
 }
+
+Reset();

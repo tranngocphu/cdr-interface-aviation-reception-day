@@ -22,14 +22,25 @@ inputTool.onMouseMove = function GlobalMouseMove (event) {
 }
 
 inputTool.onMouseDrag = function GlobalMouseDrag (event) { 
-    if (performingLateralSeparation & sectorBorder.position.getDistance(event.point) <= sectorRadius) {
+    if (lateralSeparation & sectorBorder.position.getDistance(event.point) <= sectorRadius) {
         lockLineWidth = true;
-        ownshipLateralResTop.segments[1].point = event.point;
-        ownshipLateralResSide.children[0].segments[0].point = ownshipSide.firstSegment.point;   
-        ownshipLateralResSide.children[0].segments[1].point = ownshipSide.firstSegment.point.add(ownshipLateralResTop.firstCurve.length, 0);
-        ownshipLateralResSide.children[0].segments[2].point = ownshipSide.firstSegment.point.add(ownshipLateralResTop.length, 0);
-        ownshipLateralResSide.children[1].position = ownshipLateralResSide.children[0].segments[1].point;
-        ownshipLateralResSide.visible = true;
+        if (selectedAircraft == 'blue') {
+            ownshipLateralResTop.segments[1].point = event.point;
+            ownshipLateralResSide.children[0].segments[0].point = ownshipSide.firstSegment.point;   
+            ownshipLateralResSide.children[0].segments[1].point = ownshipSide.firstSegment.point.add(ownshipLateralResTop.firstCurve.length, 0);
+            ownshipLateralResSide.children[0].segments[2].point = ownshipSide.firstSegment.point.add(ownshipLateralResTop.length, 0);
+            ownshipLateralResSide.children[1].position = ownshipLateralResSide.children[0].segments[1].point;
+            ownshipLateralResSide.visible = true;
+        } 
+        else if (selectedAircraft == 'red') {
+            console.log(selectedAircraft);
+            intruderLateralResTop.segments[1].point = event.point;
+            intruderLateralResSide.children[0].segments[0].point = intruderSide.firstSegment.point;   
+            intruderLateralResSide.children[0].segments[1].point = intruderSide.firstSegment.point.add(intruderLateralResTop.firstCurve.length, 0);
+            intruderLateralResSide.children[0].segments[2].point = intruderSide.firstSegment.point.add(intruderLateralResTop.length, 0);
+            intruderLateralResSide.children[1].position = intruderLateralResSide.children[0].segments[1].point;
+            intruderLateralResSide.visible = true;
+        }
         hasLateralRes = true;
         $('#prefer-lateral').prop('disabled', false);
         DectectAndShowLateralLOS();
@@ -90,38 +101,136 @@ inputTool.onKeyDown = function GlobalKeyDown (event) {
 // LATERAL SEPARATION 
 // =====================================================================
 // OWNSHIP TOP
-ownshipTop.onMouseEnter = function ownshipTopMouseEnter (event) {
-    if (lateralSeparation) {
-        this.strokeWidth = 1.5 * lineWidth.ownship; 
-    }    
-}
 
-ownshipTop.onMouseLeave = function ownshipTopMouseLeave (event) {
-    this.strokeWidth = lineWidth.ownship;    
-}
-
-ownshipTop.onMouseDown = function ownshipTopMouseDown (event) {
-    if (lateralSeparation) {
-        performingLateralSeparation = true;
-        ownshipLateralResTop.visible = true;    
+function SetLateralSepEventHandler() {
+    //this function this called when user select an aircraft (see dom.js)
+    if (selectedAircraft == 'blue') {
+        // The ownship is selected:
+        
+        ownshipTop.onMouseEnter = function ownshipTopMouseEnter (event) {
+            if (lateralSeparation) {
+                this.strokeWidth = 1.5 * lineWidth.ownship; 
+            }    
+        }
+        
+        ownshipTop.onMouseLeave = function ownshipTopMouseLeave (event) {
+            this.strokeWidth = lineWidth.ownship;    
+        }
+        
+        ownshipTop.onMouseDown = function ownshipTopMouseDown (event) {
+            if (lateralSeparation) {
+                performingLateralSeparation = true;
+                ownshipLateralResTop.visible = true;    
+            }
+        }
+        
+        ownshipLateralResTop.onMouseDown = function ownshipLateralResMouseDown (event) {
+            if (lateralSeparation) {
+                performingLateralSeparation = true;
+            }        
+        }
+        
+        ownshipLateralResTop.onMouseEnter = function ownshipLateralResMouseEnter (event) {
+            if (!lockLineWidth & lateralSeparation) {
+                this.strokeWidth = lineWidth.ownship * 1.5;
+            }    
+        }
+        
+        ownshipLateralResTop.onMouseLeave = function ownshipLateralResMouseLeave (event) {
+            this.strokeWidth = lineWidth.ownship * 0.5;
+        }
     }
+
+    if (selectedAircraft == 'red') {
+        // The intruder is selected:
+        
+        intruderTop.onMouseEnter = function intruderTopMouseEnter (event) {
+            if (lateralSeparation) {
+                this.strokeWidth = 1.5 * lineWidth.intruder; 
+            }    
+        }
+        
+        intruderTop.onMouseLeave = function intruderTopMouseLeave (event) {
+            this.strokeWidth = lineWidth.intruder;    
+        }
+        
+        intruderTop.onMouseDown = function intruderTopMouseDown (event) {
+            if (lateralSeparation) {
+                performingLateralSeparation = true;
+                intruderLateralResTop.visible = true;    
+            }
+        }
+        
+        intruderLateralResTop.onMouseDown = function intruderLateralResMouseDown (event) {
+            if (lateralSeparation) {
+                performingLateralSeparation = true;
+            }        
+        }
+        
+        intruderLateralResTop.onMouseEnter = function intruderLateralResMouseEnter (event) {
+            if (!lockLineWidth & lateralSeparation) {
+                this.strokeWidth = lineWidth.intruder * 1.5;
+            }    
+        }
+        
+        intruderLateralResTop.onMouseLeave = function intruderLateralResMouseLeave (event) {
+            this.strokeWidth = lineWidth.intruder * 0.5;
+        }
+    }
+
+
+
+
+
+
+
+    // if (selectedAircraft == 'blue') {
+    //     top = ownshipTop;
+    //     lateralResTop = ownshipLateralResTop;
+    // } 
+    // else if (selectedAircraft == 'red') {
+    //     top = intruderTop;
+    //     lateralResTop = intruderLateralResTop;
+    // }
+
+
+    // top.onMouseEnter = function topMouseEnter (event) {
+    //     if (lateralSeparation) {
+    //         this.strokeWidth = 1.5 * lineWidth.ownship; 
+    //     }    
+    // }
+    
+    // top.onMouseLeave = function topMouseLeave (event) {
+    //     this.strokeWidth = lineWidth.ownship;    
+    // }
+    
+    // top.onMouseDown = function topMouseDown (event) {
+    //     if (lateralSeparation) {
+    //         performingLateralSeparation = true;
+    //         ownshipLateralResTop.visible = true;    
+    //     }
+    // }
+    
+    // lateralResTop.onMouseDown = function lateralResMouseDown (event) {
+    //     if (lateralSeparation) {
+    //         performingLateralSeparation = true;
+    //     }        
+    // }
+    
+    // lateralResTop.onMouseEnter = function lateralResMouseEnter (event) {
+    //     if (!lockLineWidth & lateralSeparation) {
+    //         this.strokeWidth = lineWidth.ownship * 1.5;
+    //     }    
+    // }
+    
+    // lateralResTop.onMouseLeave = function lateralResMouseLeave (event) {
+    //     this.strokeWidth = lineWidth.ownship * 0.5;
+    // }
+
 }
 
-ownshipLateralResTop.onMouseDown = function ownshipLateralResMouseDown (event) {
-    if (lateralSeparation) {
-        performingLateralSeparation = true;
-    }        
-}
 
-ownshipLateralResTop.onMouseEnter = function ownshipLateralResMouseEnter (event) {
-    if (!lockLineWidth & lateralSeparation) {
-        this.strokeWidth = lineWidth.ownship * 1.5;
-    }    
-}
 
-ownshipLateralResTop.onMouseLeave = function ownshipLateralResMouseLeave (event) {
-    this.strokeWidth = lineWidth.ownship * 0.5;
-}
 
 // =====================================================================
 // VERTICAL SEPARATION 

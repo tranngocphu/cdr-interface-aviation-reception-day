@@ -273,7 +273,8 @@ let currentScenarioId = 0; // current scenario id = scenario index in database +
 let allResolution = [];
 let currentResolution = {
     scenario_id: null,
-    lateral: null,
+    lateral_red: null,
+    later_blue: null,
     vertical: null,
     final_res: null
 };
@@ -482,10 +483,57 @@ let ownshipOverlayTop = [
     })
 ];
 
+// intruder overlay for color changing effect during vertical separation
+let intruderOverlaySide = [
+    new Path.Line({
+        segments: [hidden, hidden],
+        visible: false,
+        strokeWidth: lineWidth.intruder,
+        strokeColor: color.intruder
+    }),
+    new Path.Line({
+        segments: [hidden, hidden],
+        visible: false,
+        strokeWidth: lineWidth.intruder,
+        strokeColor: 'white',
+        dashArray: lineWidth.dashArray
+    }),
+    new Path.Line({
+        segments: [hidden, hidden],
+        visible: false,
+        strokeWidth: lineWidth.intruder,
+        strokeColor: color.intruder
+    })
+];
+let intruderOverlayTop = [
+    new Path.Line({
+        segments: [hidden, hidden],
+        visible: false,
+        strokeWidth: lineWidth.intruder,
+        strokeColor: color.intruder
+    }),
+    new Path.Line({
+        segments: [hidden, hidden],
+        visible: false,
+        strokeWidth: lineWidth.intruder,
+        strokeColor: grayLight,
+        dashArray: lineWidth.dashArray
+    }),
+    new Path.Line({
+        segments: [hidden, hidden],
+        visible: false,
+        strokeWidth: lineWidth.intruder,
+        strokeColor: color.intruder
+    })
+];
+
 
 // ============================================================================================================
 // RESOLUTION PATHS
-// Lateral resolution
+
+let selectedAircraft = false;
+
+// OWNSHIP Resolution Paths
 let ownshipLateralResTop = new Path.Line({
     segments: [hidden, hidden, hidden],
     strokeWidth: lineWidth.ownship * 0.5,
@@ -506,6 +554,32 @@ let ownshipLateralResSide = new Group([
     })
 ]);
 let ownshipVerticalResTop = new Path.Line({
+    segments: [hidden, hidden, hidden, hidden],
+    visible: false
+});
+
+
+// INTRUDER Resolution Paths
+let intruderLateralResTop = new Path.Line({
+    segments: [hidden, hidden, hidden],
+    strokeWidth: lineWidth.intruder * 0.5,
+    strokeColor: color.intruder,
+    dashArray: lineWidth.resDashArray,
+    visible: false
+});
+let intruderLateralResSide = new Group([
+    new Path.Line({
+        segments: [hidden, hidden, hidden],
+        strokeWidth: lineWidth.intruder,
+        strokeColor: color.intruder,
+    }),
+    new Path.Circle({
+        center: hidden,
+        radius: 5,
+        fillColor: color.intruder,
+    })
+]);
+let intruderVerticalResTop = new Path.Line({
     segments: [hidden, hidden, hidden, hidden],
     visible: false
 });
@@ -678,3 +752,4 @@ let spaceSector = document.getElementById('space-sector');
 // }
 
 // UpdateSetting();
+
