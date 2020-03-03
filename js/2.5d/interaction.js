@@ -43,6 +43,8 @@ inputTool.onMouseDrag = function GlobalMouseDrag (event) {
         }
         hasLateralRes = true;
         $('#prefer-lateral').prop('disabled', false);
+        $('#prefer-ownship').prop('disabled', false);
+        $('#prefer-intruder').prop('disabled', false);
         DectectAndShowLateralLOS();
         // SaveResolution(currentScenarioId);        
     }

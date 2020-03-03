@@ -752,7 +752,8 @@ function SaveResolution(currentScenatioId) {
                 ]}
             ]    
         },
-        final_res: finalRes
+        final_res: finalRes,
+        final_ac: finalAc
     };
     currentScenario.resolution = currentResolution;
     currentScenario.data_origin = 'JavaScriptInterface';
@@ -800,6 +801,16 @@ function LoadSavedResolution(currentScenarioId) {
     ownshipLateralResTop.visible = true;
     // red one: intruder
     intruderLateralResTop.visible = true;
+    if (allResolution[idx].final_ac == 'ownship') {
+        $('#prefer-ownship').prop('checked', true);
+        $('#prefer-intruder').prop('checked', false);
+    } else if (allResolution[idx].final_ac == 'intruder') {
+        $('#prefer-ownship').prop('checked', false);
+        $('#prefer-intruder').prop('checked', true);
+    } else {
+        $('#prefer-ownship').prop('checked', false);
+        $('#prefer-intruder').prop('checked', false);
+    }
 }
 
 

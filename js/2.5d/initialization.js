@@ -276,7 +276,8 @@ let currentResolution = {
     lateral_red: null,
     later_blue: null,
     vertical: null,
-    final_res: null
+    final_res: null,
+    final_ac: null,
 };
 let upperFlight = 3;
 let middleFLight = 1;
@@ -310,7 +311,8 @@ let performingLateralSeparation = false;
 let lockLineWidth = false;
 let hasLateralRes = false;
 let hasVerticalRes = false;
-let finalRes = '';
+let finalRes = null;
+let finalAc = null;
 
 
 // Loss of separation indicator, aircraft location

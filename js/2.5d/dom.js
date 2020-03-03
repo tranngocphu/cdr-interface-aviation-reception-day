@@ -35,6 +35,8 @@ $('#input-file').change(function ButtonInputFile() {
         Reset();
         demoMode = false;
         $('#current-scen').prop('disabled', true);
+        // also load resolution (if any)
+        allResolution = allScen.map(e => e.resolution);
     }
     let file = $('#input-file')[0].files[0];
     reader.readAsText(file);
@@ -60,22 +62,27 @@ $('#next-btn').click(function ButtonNext() {
         return
     }         
     Reset();    
-    currentScenarioId += 1;
-    ShowAScenario(currentScenarioId); 
+    currentScenarioId += 1;     
     $('#lateral-sep').prop('disabled', false);  
     $('#lateral-sep').prop('checked', false);  
     $('#vertical-sep').prop('disabled', false);    
     $('#vertical-sep').prop('checked', false);  
     $('#prefer-lateral').prop('checked', false);
     $('#prefer-lateral').prop('disabled', true);
+    $('#prefer-ownship').prop('checked', false);
+    $('#prefer-ownship').prop('disabled', true);    
+    $('#prefer-intruder').prop('checked', false);
+    $('#prefer-intruder').prop('disabled', true);
     $('#prefer-vertical').prop('checked', false);
     $('#prefer-vertical').prop('disabled', true);    
     $('#prev-btn').prop('disabled', false);        
+    ShowAScenario(currentScenarioId);
     if (allResolution.length >= currentScenarioId) {
         $('#next-btn').prop('disabled', false); 
     } else {
         $('#next-btn').prop('disabled', true); 
-    }          
+    }  
+    
 })
 
 // Previous button
@@ -84,22 +91,26 @@ $('#prev-btn').click(function ButtonPrevious() {
         return
     }
     Reset();    
-    currentScenarioId -= 1;
-    ShowAScenario(currentScenarioId);
+    currentScenarioId -= 1;    
     $('#lateral-sep').prop('disabled', false);  
     $('#vertical-sep').prop('disabled', false);
     $('#lateral-sep').prop('checked', false);  
     $('#vertical-sep').prop('checked', false); 
     $('#prefer-lateral').prop('checked', false);
-    $('#prefer-lateral').prop('disabled', true);
+    $('#prefer-lateral').prop('disabled', true);    
+    $('#prefer-ownship').prop('checked', false);
+    $('#prefer-ownship').prop('disabled', true);    
+    $('#prefer-intruder').prop('checked', false);
+    $('#prefer-intruder').prop('disabled', true);    
     $('#prefer-vertical').prop('checked', false);
     $('#prefer-vertical').prop('disabled', true);
-    $('#prev-btn').prop('disabled', false);        
+    $('#prev-btn').prop('disabled', false);
+    ShowAScenario(currentScenarioId);        
     if (allResolution.length >= currentScenarioId) {
         $('#next-btn').prop('disabled', false); 
     } else {
         $('#next-btn').prop('disabled', true); 
-    }  
+    }      
 })
 
 // Current scenario input 
@@ -150,7 +161,8 @@ function SelectAircraft(color) {
         intruderLateralResTop.visible = true;
         intruderLateralResSide.visible = true;         
     }
-    DectectAndShowLateralLOS();       
+    DectectAndShowLateralLOS();    
+    $('#lateral-sep').click();  // auto choose lateral sep once an aircraft is selected
     console.log(selectedAircraft);
 }
 
@@ -265,19 +277,30 @@ $('#run-resolution').on('keyup mouseup', function SliderRunResolutionRelease() {
 
 // =========================================================
 // Resolution submission
-$('#prefer-lateral').change(function() {
-    finalRes = 'lateral';
+$('#prefer-lateral').click(function() {
+    finalRes = 'lateral';    
     SaveResolution(currentScenarioId);
     $('#next-btn').prop('disabled', false);           
     $('#prev-btn').prop('disabled', false);
 })
 
-$('#prefer-vertical').change(function() {
+$('#prefer-vertical').click(function() {
     finalRes = 'vertical';
     SaveResolution(currentScenarioId);
     $('#next-btn').prop('disabled', false);           
     $('#prev-btn').prop('disabled', false);
 })
+
+$('#prefer-ownship').click(function() {
+    finalAc = 'ownship';
+    $('#prefer-lateral').click();
+})
+
+$('#prefer-intruder').click(function() {
+    finalAc = 'intruder';
+    $('#prefer-lateral').click();
+})
+
 
 $('#download-resolution').click(function ButtonDownloadResolution() {    
     DownloadResolution();
